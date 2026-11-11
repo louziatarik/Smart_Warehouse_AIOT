@@ -1,0 +1,482 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>NEXUS IoT | Warehouse Command Center</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<div class="app-container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo">
+            <div class="logo-icon">N</div>
+            <div>
+                <h2>NEXUS<span>.IOT</span></h2>
+                <small>WAREHOUSE CONTROL</small>
+            </div>
+        </div>
+
+        <div class="sidebar-label">PROPERTY PORTFOLIO</div>
+
+        <nav class="location-nav">
+
+            <a href="#" class="nav-item">
+                <span class="nav-icon">▦</span>
+                <span>HQ - Tower 1</span>
+            </a>
+
+            <a href="#" class="nav-item active">
+                <span class="nav-icon">▣</span>
+                <span>Data Center A</span>
+                <span class="nav-active-dot"></span>
+            </a>
+
+            <a href="#" class="nav-item">
+                <span class="nav-icon">⌘</span>
+                <span>R&D Lab</span>
+            </a>
+
+            <a href="#" class="nav-item">
+                <span class="nav-icon">▤</span>
+                <span>Warehouse 4</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-divider"></div>
+
+        <div class="sidebar-label">SYSTEM ALERTS</div>
+
+        <div class="sidebar-alert critical">
+            <div class="alert-heading">
+                <span>⚠</span>
+                <strong>CRITICAL ALERT</strong>
+            </div>
+            <p>Server Room 2 Temperature High</p>
+            <small>Example alert · Demo</small>
+        </div>
+
+        <div class="sidebar-alert warning">
+            <div class="alert-heading">
+                <span>◉</span>
+                <strong>WARNING</strong>
+            </div>
+            <p>Door Sensor A1 Offline</p>
+            <small>Example alert · Demo</small>
+        </div>
+
+        <div class="sidebar-alert system">
+            <div class="alert-heading">
+                <span>✓</span>
+                <strong>SYSTEM STATUS</strong>
+            </div>
+            <p>AI monitoring service configured</p>
+            <small>System information</small>
+        </div>
+
+        <div class="sidebar-bottom">
+
+            <div class="connection-indicator">
+                <span class="status-dot" id="connectionStatus"></span>
+
+                <div>
+                    <strong id="connectionText">Connecting...</strong>
+                    <small>Backend connection</small>
+                </div>
+            </div>
+
+            <div class="sidebar-version">
+                NEXUS CONTROL SYSTEM · V1.0
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- HEADER -->
+        <header class="topbar">
+
+            <div>
+                <div class="eyebrow">MONITORING CENTER / DATA CENTER A</div>
+                <h1>IoT Monitoring Dashboard</h1>
+                <p>Environmental intelligence and AI anomaly detection</p>
+            </div>
+
+            <div class="topbar-right">
+
+                <div class="legend">
+                    <span class="legend-item">
+                        <span class="legend-dot normal-dot"></span>
+                        Normal
+                    </span>
+
+                    <span class="legend-item">
+                        <span class="legend-dot alert-dot"></span>
+                        Alerts
+                    </span>
+                </div>
+
+                <div class="live-label">
+                    <span class="live-dot"></span>
+                    LIVE MONITORING
+                </div>
+
+                <div class="current-date" id="currentDate">
+                    Loading date...
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- OVERVIEW -->
+        <section class="welcome-section">
+
+            <div>
+                <h2>Facility Overview</h2>
+                <p>Real-time warehouse environmental conditions.</p>
+            </div>
+
+            <div class="last-update">
+                LAST UPDATE
+                <strong id="lastUpdate">--</strong>
+            </div>
+
+        </section>
+
+
+        <!-- AI ALERT -->
+        <section class="alert-panel" id="aiAlert">
+
+            <div class="alert-icon" id="alertIcon">✓</div>
+
+            <div class="alert-content">
+                <h3 id="alertTitle">AI Monitoring Active</h3>
+                <p id="alertMessage">
+                    Waiting for sensor analysis...
+                </p>
+            </div>
+
+            <div class="alert-status-label">AI SYSTEM</div>
+
+        </section>
+
+
+        <!-- STATISTICS -->
+        <section class="stats-grid">
+
+            <div class="stat-card">
+                <div class="stat-heading">
+                    <span>TOTAL READINGS</span>
+                    <span class="stat-icon cyan">▤</span>
+                </div>
+
+                <h2 id="totalReadings">0</h2>
+                <p>Stored in database</p>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-heading">
+                    <span>NORMAL READINGS</span>
+                    <span class="stat-icon cyan">✓</span>
+                </div>
+
+                <h2 id="normalReadings">0</h2>
+                <p>Within learned baseline</p>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-heading">
+                    <span>AI ANOMALIES</span>
+                    <span class="stat-icon orange">!</span>
+                </div>
+
+                <h2 id="anomalyCount">0</h2>
+                <p>Unusual patterns detected</p>
+            </div>
+
+        </section>
+
+
+        <!-- MAIN DASHBOARD GRID -->
+        <section class="dashboard-grid">
+
+            <!-- FLOOR PLAN -->
+            <div class="panel floor-panel">
+
+                <div class="panel-header">
+                    <div>
+                        <h2>Facility Floor Plan</h2>
+                        <p>DATA CENTER A / LEVEL 02</p>
+                    </div>
+
+                    <span class="panel-live">
+                        <span class="live-dot"></span>
+                        LIVE VIEW
+                    </span>
+                </div>
+
+                <div class="floor-plan">
+
+                    <div class="floor-grid"></div>
+
+                    <div class="heat-zone heat-cyan"></div>
+                    <div class="heat-zone heat-orange"></div>
+
+                    <div class="floor-layout">
+
+                        <div class="room room-cyan">
+                            <span class="room-name">SERVER ROOM 01</span>
+                            <span class="sensor-dot sensor-normal"></span>
+                        </div>
+
+                        <div class="room room-orange">
+                            <span class="room-name">SERVER ROOM 02</span>
+                            <span class="sensor-dot sensor-alert"></span>
+                        </div>
+
+                        <div class="room room-cyan">
+                            <span class="room-name">NETWORK HUB</span>
+                            <span class="sensor-dot sensor-normal"></span>
+                        </div>
+
+                        <div class="room">
+                            <span class="room-name">CONTROL ROOM</span>
+                            <span class="sensor-dot sensor-normal"></span>
+                        </div>
+
+                        <div class="room room-cyan">
+                            <span class="room-name">STORAGE AREA</span>
+                            <span class="sensor-dot sensor-normal"></span>
+                        </div>
+
+                        <div class="room">
+                            <span class="room-name">LOADING ZONE</span>
+                            <span class="sensor-dot sensor-normal"></span>
+                        </div>
+
+                    </div>
+
+                    <div class="floor-overlay-label">
+                        <span class="floor-coordinate">ZONE 02 / GRID A-04</span>
+                        <span class="floor-sensor-count">● 12 SENSOR NODES</span>
+                    </div>
+
+                </div>
+
+                <div class="floor-footer">
+                    <span><i class="mini-dot cyan-bg"></i> Normal sensor</span>
+                    <span><i class="mini-dot orange-bg"></i> Alert zone</span>
+                    <span class="floor-note">Illustrative floor plan · Simulated</span>
+                </div>
+
+            </div>
+
+
+            <!-- RIGHT COLUMN -->
+            <div class="right-column">
+
+                <!-- GAUGES -->
+                <div class="gauges-grid">
+
+                    <div class="gauge-card">
+
+                        <div class="gauge-title">
+                            <span>◉</span>
+                            TEMPERATURE
+                        </div>
+
+                        <div class="gauge-wrapper">
+
+                            <svg viewBox="0 0 120 120" class="gauge-svg">
+
+                                <circle
+                                    class="gauge-track"
+                                    cx="60"
+                                    cy="60"
+                                    r="48"
+                                ></circle>
+
+                                <circle
+                                    class="gauge-progress temperature-progress"
+                                    cx="60"
+                                    cy="60"
+                                    r="48"
+                                    stroke-dasharray="301.59"
+                                    stroke-dashoffset="90.48"
+                                ></circle>
+
+                            </svg>
+
+                            <div class="gauge-value">
+                                <strong id="currentTemperature">-- °C</strong>
+                                <small>CELSIUS</small>
+                            </div>
+
+                        </div>
+
+                        <div class="gauge-footer">
+                            <span class="mini-dot cyan-bg"></span>
+                            SENSOR ACTIVE
+                        </div>
+
+                    </div>
+
+
+                    <div class="gauge-card">
+
+                        <div class="gauge-title">
+                            <span>◉</span>
+                            HUMIDITY
+                        </div>
+
+                        <div class="gauge-wrapper">
+
+                            <svg viewBox="0 0 120 120" class="gauge-svg">
+
+                                <circle
+                                    class="gauge-track"
+                                    cx="60"
+                                    cy="60"
+                                    r="48"
+                                ></circle>
+
+                                <circle
+                                    class="gauge-progress humidity-progress"
+                                    cx="60"
+                                    cy="60"
+                                    r="48"
+                                    stroke-dasharray="301.59"
+                                    stroke-dashoffset="150.80"
+                                ></circle>
+
+                            </svg>
+
+                            <div class="gauge-value">
+                                <strong id="currentHumidity">-- %</strong>
+                                <small>HUMIDITY</small>
+                            </div>
+
+                        </div>
+
+                        <div class="gauge-footer">
+                            <span class="mini-dot cyan-bg"></span>
+                            SENSOR ACTIVE
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- TEMPERATURE CHART -->
+                <div class="panel trend-panel" id="charts">
+
+                    <div class="panel-header">
+                        <div>
+                            <h2>Temperature Trend</h2>
+                            <p>Recent sensor measurements</p>
+                        </div>
+
+                        <span class="chart-label">LIVE DATA</span>
+                    </div>
+
+                    <div class="trend-chart-container">
+                        <canvas id="temperatureChart"></canvas>
+                    </div>
+
+                    <div class="trend-footer">
+                        <span>
+                            <i class="mini-dot cyan-bg"></i>
+                            Temperature (°C)
+                        </span>
+
+                        <span>Last 50 readings</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- SENSOR READINGS -->
+        <section class="readings-section panel" id="readings">
+
+            <div class="panel-header readings-header">
+
+                <div>
+                    <h2>Recent Sensor Readings</h2>
+                    <p>AI-analyzed environmental measurements</p>
+                </div>
+
+                <span class="chart-label">LATEST 50 RECORDS</span>
+
+            </div>
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Timestamp</th>
+                            <th>Temperature</th>
+                            <th>Humidity</th>
+                            <th>AI Status</th>
+                            <th>Anomaly Score</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="readingsTable">
+
+                        <tr>
+                            <td colspan="6">Waiting for sensor data...</td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- FOOTER -->
+        <footer>
+            <span>NEXUS IoT MONITORING SYSTEM</span>
+            <span>FastAPI · SQLite · Isolation Forest · Chart.js</span>
+        </footer>
+
+    </main>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
