@@ -77,7 +77,7 @@ The monitoring workflow is:
 
 ### Dashboard Preview
 
-![NEXUS IoT Dashboard](screenshots/smart-warehouse-dashboard.png)
+![NEXUS IoT Dashboard](screenshots/nexus-iot-full-dashboard.png)
 
 ## Project Structure
 
