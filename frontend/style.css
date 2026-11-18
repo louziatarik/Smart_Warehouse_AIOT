@@ -139,14 +139,22 @@ body {
     text-shadow: 0 0 10px var(--cyan);
 }
 
+
 .nav-active-dot {
+    display: none;
     width: 5px;
     height: 5px;
     margin-left: auto;
+    flex-shrink: 0;
     border-radius: 50%;
     background: var(--cyan);
     box-shadow: 0 0 9px var(--cyan);
 }
+
+.nav-item.active .nav-active-dot {
+    display: block;
+}
+
 
 .sidebar-divider {
     height: 1px;
@@ -1175,4 +1183,60 @@ html {
 
 body {
     overflow-x: hidden;
+}
+/* PROPERTY PORTFOLIO — ALL FACILITIES BLUE */
+
+.location-nav .nav-item {
+    background: rgba(0, 240, 255, 0.08);
+    color: #00F0FF;
+    border-left: 3px solid #00F0FF;
+}
+
+.location-nav .nav-item .nav-active-dot {
+    display: block;
+    background: #00F0FF;
+    opacity: 1;
+}
+
+.location-nav .nav-item:hover {
+    background: rgba(0, 240, 255, 0.15);
+}
+
+.location-nav .nav-item.active {
+    background: rgba(0, 240, 255, 0.18);
+    color: #00F0FF;
+}
+/* SMOOTH DASHBOARD REFRESH */
+
+html {
+    scroll-behavior: auto;
+    overflow-anchor: none;
+}
+
+body {
+    overflow-anchor: none;
+}
+
+/* Smooth changes in sensor gauges */
+.temperature-progress,
+.humidity-progress {
+    transition: stroke-dashoffset 0.8s ease;
+}
+
+/* Prevent chart resizing during updates */
+.chart-container,
+.chart-wrapper {
+    min-height: 250px;
+}
+
+/* Keep tables visually stable */
+table {
+    table-layout: fixed;
+}
+
+/* Smooth facility selection */
+.location-nav .nav-item {
+    transition: background-color 0.25s ease,
+                color 0.25s ease,
+                border-color 0.25s ease;
 }

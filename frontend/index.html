@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="style.css">
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js" defer></script>
 </head>
 
 <body>
@@ -34,30 +35,33 @@
 
         <div class="sidebar-label">PROPERTY PORTFOLIO</div>
 
-        <nav class="location-nav">
+        <nav class="location-nav" aria-label="Facility navigation">
 
-            <a href="#" class="nav-item">
-                <span class="nav-icon">▦</span>
-                <span>HQ - Tower 1</span>
-            </a>
+    <button type="button" class="nav-item" data-facility="hq">
+        <span class="nav-icon">▦</span>
+        <span>HQ - Tower 1</span>
+        <span class="nav-active-dot"></span>
+    </button>
 
-            <a href="#" class="nav-item active">
-                <span class="nav-icon">▣</span>
-                <span>Data Center A</span>
-                <span class="nav-active-dot"></span>
-            </a>
+    <button type="button" class="nav-item active" data-facility="data-center" aria-current="page">
+        <span class="nav-icon">▣</span>
+        <span>Data Center A</span>
+        <span class="nav-active-dot"></span>
+    </button>
 
-            <a href="#" class="nav-item">
-                <span class="nav-icon">⌘</span>
-                <span>R&D Lab</span>
-            </a>
+    <button type="button" class="nav-item" data-facility="rnd">
+        <span class="nav-icon">⌘</span>
+        <span>R&D Lab</span>
+        <span class="nav-active-dot"></span>
+    </button>
 
-            <a href="#" class="nav-item">
-                <span class="nav-icon">▤</span>
-                <span>Warehouse 4</span>
-            </a>
+    <button type="button" class="nav-item" data-facility="warehouse">
+        <span class="nav-icon">▤</span>
+        <span>Warehouse 4</span>
+        <span class="nav-active-dot"></span>
+    </button>
 
-        </nav>
+</nav>
 
         <div class="sidebar-divider"></div>
 
@@ -77,7 +81,7 @@
                 <span>◉</span>
                 <strong>WARNING</strong>
             </div>
-            <p>Door Sensor A1 Offline</p>
+            <p>Physical Sensor Hardware Not Connected</p>
             <small>Example alert · Demo</small>
         </div>
 
@@ -86,7 +90,7 @@
                 <span>✓</span>
                 <strong>SYSTEM STATUS</strong>
             </div>
-            <p>AI monitoring service configured</p>
+            <p>AI monitoring active — simulated sensor data</p>
             <small>System information</small>
         </div>
 
@@ -109,7 +113,6 @@
 
     </aside>
 
-
     <!-- MAIN CONTENT -->
     <main class="main-content">
 
@@ -117,9 +120,17 @@
         <header class="topbar">
 
             <div>
-                <div class="eyebrow">MONITORING CENTER / DATA CENTER A</div>
-                <h1>IoT Monitoring Dashboard</h1>
+                <div class="eyebrow" id="facilitySubtitle">
+                    MONITORING CENTER / DATA CENTER A
+                </div>
+
+                <h1 id="dashboardTitle">Data Center A Dashboard</h1>
+
                 <p>Environmental intelligence and AI anomaly detection</p>
+
+                <p id="facilityDataNotice">
+                    Viewing Data Center A. Displaying its independently generated simulated sensor readings.
+                </p>
             </div>
 
             <div class="topbar-right">
@@ -138,7 +149,7 @@
 
                 <div class="live-label">
                     <span class="live-dot"></span>
-                    LIVE MONITORING
+                    SIMULATED SENSOR DATA
                 </div>
 
                 <div class="current-date" id="currentDate">
@@ -149,13 +160,12 @@
 
         </header>
 
-
         <!-- OVERVIEW -->
         <section class="welcome-section">
 
             <div>
                 <h2>Facility Overview</h2>
-                <p>Real-time warehouse environmental conditions.</p>
+                <p>Environmental intelligence and monitoring conditions.</p>
             </div>
 
             <div class="last-update">
@@ -164,7 +174,6 @@
             </div>
 
         </section>
-
 
         <!-- AI ALERT -->
         <section class="alert-panel" id="aiAlert">
@@ -178,10 +187,9 @@
                 </p>
             </div>
 
-            <div class="alert-status-label">AI SYSTEM</div>
+            <div class="alert-status-label">HYBRID SYSTEM</div>
 
         </section>
-
 
         <!-- STATISTICS -->
         <section class="stats-grid">
@@ -203,21 +211,20 @@
                 </div>
 
                 <h2 id="normalReadings">0</h2>
-                <p>Within learned baseline</p>
+                <p>Within hybrid monitoring limits</p>
             </div>
 
             <div class="stat-card">
                 <div class="stat-heading">
-                    <span>AI ANOMALIES</span>
+                    <span>TOTAL ANOMALIES</span>
                     <span class="stat-icon orange">!</span>
                 </div>
 
                 <h2 id="anomalyCount">0</h2>
-                <p>Unusual patterns detected</p>
+                <p>AI and safety-rule detections</p>
             </div>
 
         </section>
-
 
         <!-- MAIN DASHBOARD GRID -->
         <section class="dashboard-grid">
@@ -227,13 +234,13 @@
 
                 <div class="panel-header">
                     <div>
-                        <h2>Facility Floor Plan</h2>
-                        <p>DATA CENTER A / LEVEL 02</p>
+                        <h2 id="floorPlanTitle">Data Center Floor Plan</h2>
+                        <p id="floorPlanSubtitle">DATA CENTER A / LEVEL 02</p>
                     </div>
 
                     <span class="panel-live">
                         <span class="live-dot"></span>
-                        LIVE VIEW
+                        SIMULATED VIEW
                     </span>
                 </div>
 
@@ -280,7 +287,7 @@
 
                     <div class="floor-overlay-label">
                         <span class="floor-coordinate">ZONE 02 / GRID A-04</span>
-                        <span class="floor-sensor-count">● 12 SENSOR NODES</span>
+                        <span class="floor-sensor-count">● 1 SIMULATED SENSOR STREAM</span>
                     </div>
 
                 </div>
@@ -292,7 +299,6 @@
                 </div>
 
             </div>
-
 
             <!-- RIGHT COLUMN -->
             <div class="right-column">
@@ -343,7 +349,6 @@
 
                     </div>
 
-
                     <div class="gauge-card">
 
                         <div class="gauge-title">
@@ -389,7 +394,6 @@
 
                 </div>
 
-
                 <!-- TEMPERATURE CHART -->
                 <div class="panel trend-panel" id="charts">
 
@@ -399,7 +403,7 @@
                             <p>Recent sensor measurements</p>
                         </div>
 
-                        <span class="chart-label">LIVE DATA</span>
+                        <span class="chart-label">SIMULATED DATA</span>
                     </div>
 
                     <div class="trend-chart-container">
@@ -421,7 +425,6 @@
 
         </section>
 
-
         <!-- SENSOR READINGS -->
         <section class="readings-section panel" id="readings">
 
@@ -432,7 +435,7 @@
                     <p>AI-analyzed environmental measurements</p>
                 </div>
 
-                <span class="chart-label">LATEST 50 RECORDS</span>
+                <span class="chart-label">LATEST 10 RECORDS</span>
 
             </div>
 
@@ -446,7 +449,7 @@
                             <th>Timestamp</th>
                             <th>Temperature</th>
                             <th>Humidity</th>
-                            <th>AI Status</th>
+                            <th>Hybrid Status</th>
                             <th>Anomaly Score</th>
                         </tr>
                     </thead>
@@ -465,18 +468,56 @@
 
         </section>
 
+        <!-- HYBRID ANOMALY HISTORY -->
+        <section class="readings-section panel" id="anomalyHistory">
+
+            <div class="panel-header readings-header">
+
+                <div>
+                    <h2>Hybrid Anomaly History</h2>
+                    <p>Most recent AI and safety-rule detections</p>
+                </div>
+
+                <span class="chart-label">LATEST 5 ANOMALIES</span>
+
+            </div>
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Temperature</th>
+                            <th>Humidity</th>
+                            <th>Anomaly Score</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="anomalyHistoryTable">
+
+                        <tr>
+                            <td colspan="4">Waiting for anomaly data...</td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
 
         <!-- FOOTER -->
         <footer>
             <span>NEXUS IoT MONITORING SYSTEM</span>
-            <span>FastAPI · SQLite · Isolation Forest · Chart.js</span>
+            <span>FastAPI · SQLite · Isolation Forest · Rule-Based Monitoring · Chart.js</span>
         </footer>
 
     </main>
 
 </div>
-
-<script src="script.js"></script>
 
 </body>
 </html>

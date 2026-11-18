@@ -1,5 +1,5 @@
 
-# Smart Warehouse Temperature and Humidity Monitoring System with AI-Based Anomaly Detection
+# Smart Warehouse AIoT Monitoring System Using Hybrid AI Anomaly Detection
 
 **Project Type:** Artificial Intelligence of Things (AIoT)
 
@@ -17,15 +17,17 @@
 
 # Abstract
 
-Warehouse environments require continuous monitoring to maintain suitable temperature and humidity conditions for stored products. Traditional monitoring methods may depend on manual inspection and may not identify unusual environmental changes quickly.
+Warehouse environments require environmental monitoring to help maintain appropriate storage conditions. Temperature and humidity variations may affect stored products, making continuous monitoring and anomaly identification important.
 
-This project presents a Smart Warehouse Temperature and Humidity Monitoring System based on Artificial Intelligence of Things (AIoT). The system collects temperature and humidity readings through a Python-based sensor simulator, processes and stores the data in an SQLite database, and applies a machine learning model to identify unusual environmental patterns.
+This project presents a Smart Warehouse AIoT Monitoring System that combines machine learning-based anomaly detection with rule-based environmental monitoring.
 
-The AI component uses the Isolation Forest algorithm for anomaly detection. A FastAPI backend provides access to sensor readings and monitoring statistics, while a web-based dashboard developed with HTML, CSS, JavaScript, and Chart.js displays environmental measurements, historical charts, and anomaly alerts.
+The system generates temperature and humidity readings using a Python-based sensor simulator. The readings are processed and stored in an SQLite database. An Isolation Forest V2 model analyzes environmental patterns, while a configurable rule engine checks measurements against predefined temperature and humidity limits.
 
-The current implementation is a functional software prototype using simulated sensor data. It demonstrates how IoT data processing, machine learning, database management, and web technologies can be integrated into a warehouse monitoring application. Physical sensor integration and MQTT communication are considered future improvements.
+A FastAPI backend provides monitoring information through REST API endpoints. A web-based dashboard developed using HTML, CSS, JavaScript, and Chart.js presents environmental measurements, historical data, system statistics, and hybrid anomaly alerts.
 
-**Keywords:** AIoT, Smart Warehouse, Internet of Things, Machine Learning, Isolation Forest, FastAPI, SQLite, Environmental Monitoring.
+The current implementation is a functional software prototype using simulated sensor data. It demonstrates the integration of IoT-style data generation, machine learning, rule-based monitoring, database management, and web technologies. Physical sensor integration and MQTT communication remain possible future improvements.
+
+**Keywords:** AIoT, Smart Warehouse, Internet of Things, Machine Learning, Isolation Forest, Hybrid Anomaly Detection, FastAPI, SQLite.
 
 ---
 
@@ -33,149 +35,137 @@ The current implementation is a functional software prototype using simulated se
 
 ## 1.1 Background
 
-Warehouses play an important role in the storage and distribution of products. Environmental conditions, particularly temperature and humidity, can influence product quality and storage conditions.
+Warehouses play an important role in the storage and distribution of products. Environmental conditions, particularly temperature and humidity, can influence product quality and storage requirements.
 
-Traditional monitoring approaches may require employees to check environmental measurements manually. This can make it difficult to identify unusual changes continuously.
+Manual monitoring may not provide continuous analysis of environmental measurements. IoT technologies provide a way to collect environmental data automatically, while artificial intelligence can help identify unusual patterns in the collected measurements.
 
-The Internet of Things (IoT) provides a way to collect environmental information automatically through connected sensors. Artificial Intelligence (AI) can further improve monitoring by analyzing collected data and identifying unusual patterns.
-
-By combining these technologies, an AIoT-based warehouse monitoring system can provide continuous environmental observation and support faster identification of abnormal readings.
+Combining these technologies can support more effective environmental monitoring.
 
 ## 1.2 Problem Statement
 
-Monitoring temperature and humidity is important in warehouse environments. However, manual monitoring can be time-consuming and may not provide continuous analysis of environmental measurements.
+Warehouse environmental monitoring requires a system capable of collecting, storing, analyzing, and presenting temperature and humidity measurements.
 
-There is a need for a system that can collect environmental data, store historical readings, analyze measurements automatically, and present monitoring information through an accessible interface.
+A monitoring approach based only on predefined limits may fail to identify unusual patterns within otherwise acceptable measurements. Similarly, a machine learning model may not always identify absolute environmental limit violations.
 
-This project addresses this need by developing a software prototype that combines simulated sensor readings, machine learning-based anomaly detection, database storage, and a web dashboard.
+This project addresses these limitations by combining machine learning anomaly detection with rule-based environmental checks.
 
 ## 1.3 Project Objectives
 
-The main objectives of this project are:
+The main objectives are:
 
 1. Develop a system for collecting temperature and humidity readings.
-2. Simulate environmental sensor data for warehouse monitoring.
-3. Store collected readings in an SQLite database.
-4. Apply machine learning to identify unusual environmental patterns.
-5. Develop a REST API using FastAPI.
-6. Create a web dashboard for displaying real-time monitoring information.
-7. Visualize historical temperature and humidity measurements.
-8. Display AI anomaly alerts to help users identify unusual readings.
+2. Simulate environmental sensor data.
+3. Store measurements in an SQLite database.
+4. Implement machine learning-based anomaly detection.
+5. Implement configurable environmental safety rules.
+6. Combine AI and rule-based results into a hybrid monitoring system.
+7. Develop a REST API using FastAPI.
+8. Create a web dashboard for displaying monitoring information.
+9. Visualize historical temperature and humidity measurements.
+10. Display anomaly alerts and detection sources.
 
 ## 1.4 Scope of the Project
 
-The current project focuses on developing and testing a software-based AIoT prototype.
+The current project focuses on a software-based AIoT prototype.
 
-The implementation includes simulated environmental data generation, Python-based processing, SQLite storage, Isolation Forest anomaly detection, a FastAPI backend, and a browser-based dashboard.
+Its implementation includes:
 
-The current prototype does not yet include physical sensor connections or MQTT communication. These features can be integrated in future development stages.
+- Simulated temperature and humidity readings.
+- Python-based data processing.
+- SQLite database storage.
+- Isolation Forest V2 anomaly detection.
+- Rule-based environmental monitoring.
+- Hybrid anomaly classification.
+- FastAPI backend services.
+- Browser-based monitoring dashboard.
+
+Physical sensors, MQTT communication, and real-world warehouse deployment are outside the current implementation scope.
 
 ---
 
-# 2. System Architecture
 
 ## 2.1 Architecture Overview
 
-The Smart Warehouse AIoT Monitoring System follows a layered architecture that separates data generation, processing, AI analysis, storage, and user interaction.
+The Smart Warehouse AIoT Monitoring System uses a modular, multi-facility architecture.
 
-The architecture consists of the following components:
+The prototype monitors four simulated facilities:
 
-### 1. Data Generation Layer
+1. HQ - Tower 1 (`hq`).
+2. Data Center A (`data-center`).
+3. R&D Lab (`rnd`).
+4. Warehouse 4 (`warehouse`).
 
-This layer generates temperature and humidity measurements using a Python-based sensor simulator.
+The system consists of five main layers:
 
-The simulator produces environmental readings at regular intervals to represent the behavior of warehouse monitoring sensors.
+1. **Sensor Simulation Layer:** Generates temperature and humidity measurements for each facility.
+2. **Backend Processing Layer:** Handles data validation, database access, and API requests.
+3. **Hybrid Detection Layer:** Combines Isolation Forest V2 anomaly detection with rule-based environmental monitoring.
+4. **Database Layer:** Stores timestamped measurements with their corresponding facility identifiers.
+5. **Dashboard Layer:** Displays facility-specific environmental information, charts, statistics, and anomaly history.
 
-### 2. Edge Processing Layer
+All four facilities share the same FastAPI backend, SQLite database, and trained Isolation Forest V2 model.
 
-Python processes the generated sensor readings before they are stored.
-
-The processing component prepares the temperature and humidity values for further analysis.
-
-### 3. Artificial Intelligence Layer
-
-The system uses the Isolation Forest machine learning algorithm to identify unusual environmental readings.
-
-The trained model analyzes temperature and humidity values and classifies measurements as either normal or anomalous.
-
-### 4. Data Storage Layer
-
-An SQLite database stores the collected sensor readings.
-
-Each record contains:
-- Reading ID
-- Timestamp
-- Temperature
-- Humidity
-
-### 5. Backend Application Layer
-
-The backend is developed using FastAPI.
-
-It provides REST API endpoints for:
-- Checking system health.
-- Retrieving sensor readings.
-- Retrieving monitoring statistics.
-- Providing AI analysis results.
-
-### 6. Presentation Layer
-
-The presentation layer is a web-based dashboard developed using HTML, CSS, JavaScript, and Chart.js.
-
-It displays:
-- Latest temperature measurements.
-- Latest humidity measurements.
-- Total stored readings.
-- Normal and anomalous readings.
-- Historical environmental charts.
-- AI anomaly alerts.
+The current implementation is a software prototype using simulated environmental measurements rather than physical IoT sensors.
 
 ## 2.2 Data Flow
 
-The system follows this data flow:
+The system follows this process:
 
-1. The Python simulator generates temperature and humidity readings.
-2. Python processes the generated measurements.
+1. The Python sensor simulator generates independent temperature and humidity readings for each of the four facilities.
+2. Each reading is associated with a unique `facility_id`.
 3. The readings are stored in the SQLite database.
-4. The trained Isolation Forest model analyzes the measurements.
-5. FastAPI provides the readings and analysis results through REST endpoints.
-6. The web dashboard retrieves the information from the API.
-7. Chart.js visualizes historical measurements, while the dashboard displays monitoring statistics and anomaly alerts.
+4. The backend retrieves environmental measurements and prepares the features required by Isolation Forest V2.
+5. The AI model analyzes temperature, humidity, and changes between measurements.
+6. The rule-based monitoring component checks readings against the configured environmental thresholds.
+7. Hybrid decision logic combines the AI and rule-based classifications.
+8. FastAPI provides facility-specific readings, statistics, and monitoring information through REST endpoints.
+9. The JavaScript dashboard requests updated information automatically every five seconds.
+10. Users select a facility from the sidebar to view its environmental measurements, charts, and anomaly history.
+
+The multi-facility architecture allows the prototype to demonstrate monitoring of several locations through one centralized interface.
+
+The shared AI model is trained using available simulated data and has not been independently validated for each facility.
+
+
 
 ## 2.3 Architecture Diagram
 
-The system architecture diagram is included as:
+The system architecture diagram is available at:
 
-`../screenshots/system_architecture.png`
+![Smart Warehouse AIoT System Architecture](../screenshots/smart-warehouse-architecture.png)
 
----
+The diagram illustrates the main components of the Smart Warehouse AIoT Monitoring System and their interactions.
+
+The implemented system includes simulated environmental data generation, a Python backend, SQLite database storage, Isolation Forest anomaly detection, rule-based environmental monitoring, REST API communication, and a web dashboard.
+
+The architecture has subsequently been extended to support four monitored facilities and hybrid anomaly detection using Isolation Forest V2.
+
 
 # 3. Technologies and Development Tools
-
-The project uses the following technologies:
 
 | Technology | Purpose |
 |---|---|
 | Python | Main programming language and data processing |
 | FastAPI | Backend REST API |
-| SQLite | Sensor data storage |
-| Scikit-learn | Machine learning and anomaly detection |
-| Isolation Forest | Identification of unusual readings |
-| Joblib | Saving and loading the trained model |
+| SQLite | Environmental measurement storage |
+| Scikit-learn | Machine learning |
+| Isolation Forest | Anomaly detection |
+| StandardScaler | Feature scaling |
+| Joblib | Model persistence |
 | HTML | Dashboard structure |
 | CSS | Dashboard styling |
 | JavaScript | Frontend functionality |
-| Chart.js | Environmental data visualization |
-| Uvicorn | Running the FastAPI application |
+| Chart.js | Data visualization |
+| Uvicorn | Running the backend |
 | Visual Studio Code | Development environment |
 
 ## 3.1 Development Environment
 
 The project was developed using Visual Studio Code on Windows.
 
-Python 3.13.15 was used as the programming environment. A Python virtual environment was created to manage project dependencies.
+Python 3.13.15 was used as the programming environment. A Python virtual environment was created to manage dependencies.
 
-The backend and frontend were developed as separate components within the same project directory.
+The project separates backend, frontend, data, models, documentation, and screenshots into different directories.
 
 ---
 
@@ -185,39 +175,56 @@ The backend and frontend were developed as separate components within the same p
 
 The project uses SQLite as its database management system.
 
-SQLite was selected because it is lightweight, easy to integrate with Python, and suitable for a software prototype that stores environmental sensor measurements.
+SQLite was selected because it is lightweight and can be integrated directly with Python.
 
-The database file is named:
+The database file is:
 
-`warehouse.db`
+`data/warehouse.db`
 
-It is located in the project's `data` directory.
 
 ## 4.2 Database Table
 
-The system uses a table named `sensor_readings`.
+The system uses a SQLite table named `sensor_readings` to store environmental measurements from four monitored facilities.
 
 | Field | Data Type | Description |
 |---|---|---|
-| id | INTEGER | Unique reading identifier |
-| timestamp | TEXT | Date and time of measurement |
-| temperature | REAL | Temperature in Celsius |
+| id | INTEGER | Unique reading identifier and primary key |
+| timestamp | TEXT | Date and time of the measurement |
+| temperature | REAL | Temperature measurement in degrees Celsius |
 | humidity | REAL | Relative humidity percentage |
+| facility_id | TEXT | Identifier of the monitored facility |
 
-The `id` field is the primary key and automatically increases for each new record.
+The `id` field automatically increases for each new measurement.
 
-The timestamp, temperature, and humidity fields are required.
+The `facility_id` field identifies the facility associated with each reading.
+
+The system currently supports four facilities:
+
+| Facility ID | Facility Name |
+|---|---|
+| `hq` | HQ - Tower 1 |
+| `data-center` | Data Center A |
+| `rnd` | R&D Lab |
+| `warehouse` | Warehouse 4 |
+
+The database supports facility-specific filtering, allowing the backend to retrieve measurements for an individual facility.
+
+Existing historical readings were preserved during the database upgrade and assigned to Data Center A.
+
+The current implementation uses one SQLite database for all four facilities.
+
 
 ## 4.3 Database Operations
 
-The Python database module provides the following operations:
+The database module supports:
 
-- Initialize the database and create the sensor readings table.
-- Insert new environmental measurements.
-- Retrieve stored sensor readings.
-- Retrieve recent measurements for dashboard visualization.
+- Database initialization.
+- Creation of the sensor readings table.
+- Insertion of environmental measurements.
+- Retrieval of stored readings.
+- Retrieval of recent measurements.
 
-The database allows the application to maintain historical environmental measurements.
+The database maintains the historical measurements used by the monitoring system.
 
 ---
 
@@ -225,243 +232,484 @@ The database allows the application to maintain historical environmental measure
 
 ## 5.1 Machine Learning Algorithm
 
-The project uses the Isolation Forest algorithm from the Scikit-learn library.
+The project uses the Isolation Forest algorithm from Scikit-learn.
 
-Isolation Forest is an unsupervised machine learning algorithm designed to identify unusual observations in datasets.
+Isolation Forest is an unsupervised machine learning algorithm designed to identify observations that differ from learned data patterns.
 
-Unlike supervised classification algorithms, it does not require manually labeled normal and anomalous examples during training.
+The current V2 model uses four input features:
 
-In this project, the model analyzes two input features:
+1. Temperature.
+2. Humidity.
+3. Absolute temperature change.
+4. Absolute humidity change.
 
-- Temperature (°C)
-- Humidity (%)
+Including environmental changes allows the model to analyze both measurement values and changes between consecutive readings.
 
-## 5.2 Model Training
+## 5.2 Model Architecture and Configuration
 
-The model is trained using environmental readings stored in the SQLite database.
-
-The implementation uses the following configuration:
+The V2 model uses a processing pipeline containing StandardScaler and Isolation Forest.
 
 | Parameter | Value |
 |---|---|
 | Algorithm | Isolation Forest |
-| Number of estimators | 100 |
+| Model version | V2 |
+| Number of estimators | 200 |
 | Contamination | 0.05 |
 | Random state | 42 |
-| Input features | Temperature and humidity |
+| Input features | 4 |
+| Feature scaling | StandardScaler |
 
-The contamination parameter represents the expected proportion of unusual observations used by the model during training.
+The trained model is saved using Joblib at:
 
-The trained model is saved using Joblib in:
+`models/isolation_forest_v2.joblib`
 
-`models/isolation_forest.joblib`
-
-This allows the application to load the trained model without training it every time the monitoring system starts.
+This allows the backend to load the trained model without retraining it every time the application starts.
 
 ## 5.3 Anomaly Detection Process
 
-When a new sensor reading is generated, the AI model analyzes its temperature and humidity values.
+The model analyzes environmental readings and returns a prediction:
 
-The model returns a prediction:
+- **Normal (1):** The observation is not classified as anomalous.
+- **Anomaly (-1):** The observation is classified as unusual compared with learned patterns.
 
-- **Normal (1):** The reading is not identified as an anomaly.
-- **Anomaly (-1):** The reading is identified as unusual compared with the learned data patterns.
+The model also provides an anomaly decision score.
 
-The model also calculates a decision score that indicates how the observation relates to its learned decision boundary.
-
-A negative decision score indicates an anomalous observation.
+The score helps indicate how an observation relates to the model's learned decision boundary. It should not be interpreted as a probability of an environmental problem.
 
 ## 5.4 Model Testing
 
-The trained model was tested using an example environmental measurement:
+The V2 model was tested using controlled environmental scenarios.
 
-| Parameter | Test Value |
-|---|---:|
-| Temperature | 35.0 °C |
-| Humidity | 90.0% |
-| Expected model classification | Anomaly |
+| Scenario | AI Classification |
+|---|---|
+| Normal environment | NORMAL |
+| High temperature | NORMAL |
+| High humidity | NORMAL |
+| Rapid temperature change | ANOMALY |
 
-The test produced an anomaly classification, demonstrating that the trained model can identify measurements that differ from its learned baseline.
+These tests demonstrated an important limitation: the model can identify unusual patterns but may not independently detect every absolute environmental limit violation.
+
+This motivated the addition of rule-based monitoring.
+
+The tests are controlled functional checks and do not represent a formal accuracy evaluation using a labelled dataset.
 
 ## 5.5 AI Model Limitations
 
-The model identifies unusual patterns based on the training data. It does not directly predict product spoilage or determine whether warehouse conditions are safe for specific products.
+The model learns patterns from the available simulated training data.
 
-Reliable product-safety assessment would require product-specific environmental limits and additional validation using representative warehouse data.
+Its predictions depend on the characteristics of the training dataset. It does not directly predict product spoilage or determine whether conditions are safe for specific products.
+
+Additional representative data and formal evaluation would be necessary before using the model in a real warehouse.
 
 ---
 
-# 6. Backend Development
+# 6. Rule-Based Environmental Monitoring
 
-## 6.1 FastAPI Backend
+## 6.1 Purpose
 
-The backend was developed using FastAPI, a Python framework for building REST APIs.
+The rule-based monitoring component complements machine learning by checking whether environmental measurements exceed configured limits.
 
-It connects the SQLite database, the trained machine learning model, and the web dashboard.
+Unlike the AI model, which identifies unusual patterns, the rule engine directly checks temperature and humidity values against predefined thresholds.
 
-The backend is responsible for retrieving sensor measurements, performing AI analysis, and providing monitoring information to the frontend.
+## 6.2 Configured Thresholds
 
-## 6.2 API Endpoints
+The current prototype uses the following demonstration settings:
 
-The application provides the following endpoints:
+| Parameter | Minimum | Maximum |
+|---|---:|---:|
+| Temperature | 15 °C | 30 °C |
+| Humidity | 30% | 70% |
 
-| Endpoint | Method | Function |
+These are configurable project demonstration limits. They are not universal warehouse standards or validated storage requirements for specific products.
+
+## 6.3 Rule-Based Detection
+
+The rule engine checks each measurement.
+
+Possible alerts include:
+
+- `TEMPERATURE_OUT_OF_RANGE`
+- `HUMIDITY_OUT_OF_RANGE`
+
+A reading is classified as a rule-based anomaly if either configured environmental limit is exceeded.
+
+---
+
+# 7. Hybrid AI and Rule-Based Detection
+
+## 7.1 Hybrid Monitoring Approach
+
+The main improvement in the current project is the integration of AI-based anomaly detection and rule-based environmental monitoring.
+
+The two methods have complementary purposes:
+
+- Isolation Forest identifies unusual environmental patterns.
+- The rule engine detects violations of configured temperature and humidity limits.
+
+Combining both methods provides a more comprehensive monitoring approach than using either method independently.
+
+## 7.2 Hybrid Decision Logic
+
+The final classification follows these rules:
+
+| AI Result | Rule Result | Final Classification |
 |---|---|---|
-| `/` | GET | Checks whether the API is running |
-| `/api/health` | GET | Checks API and AI model status |
-| `/api/readings` | GET | Retrieves sensor readings and AI classifications |
-| `/api/summary` | GET | Provides monitoring statistics and the latest reading |
+| ANOMALY | NORMAL | ANOMALY |
+| NORMAL | ANOMALY | ANOMALY |
+| ANOMALY | ANOMALY | ANOMALY |
+| NORMAL | NORMAL | NORMAL |
+| Model unavailable | NORMAL | UNKNOWN |
 
-The API returns information in JSON format.
+If both methods identify an issue, the dashboard can indicate that both AI and rules detected it.
 
-## 6.3 Backend Execution
+The system also identifies the detection source:
 
-The FastAPI application is launched using Uvicorn.
+- AI
+- RULES
+- AI + RULES
+- UNKNOWN
 
-The backend runs locally at:
+
+## 7.3 Hybrid Testing
+
+The hybrid anomaly detection system was evaluated using four controlled environmental scenarios.
+
+Each scenario was processed using Isolation Forest V2 and the rule-based environmental monitoring component.
+
+The final hybrid classification was determined by combining both detection results.
+
+### Test Results
+
+| Test Scenario | AI Result | Rule Result | Final Hybrid Result |
+|---|---|---|---|
+| Normal warehouse conditions (24°C, 55%) | NORMAL | NORMAL | NORMAL |
+| High temperature (45°C, 55%) | NORMAL | ANOMALY | ANOMALY |
+| Very high humidity (24°C, 95%) | NORMAL | ANOMALY | ANOMALY |
+| Rapid temperature increase (35°C, 55%) | ANOMALY | ANOMALY | ANOMALY |
+
+### Analysis
+
+The normal environmental scenario was classified as NORMAL by both detection methods.
+
+In the high-temperature scenario, Isolation Forest V2 classified the reading as NORMAL. However, the rule-based component identified that the temperature exceeded the configured maximum of 30°C.
+
+Similarly, the very-high-humidity scenario was classified as NORMAL by the AI model, while the rule-based component detected that humidity exceeded the configured maximum of 70%.
+
+In the rapid-temperature-increase scenario, both the AI model and rule-based component classified the reading as anomalous.
+
+These results demonstrate the complementary behavior of the two monitoring methods.
+
+The hybrid system successfully identified the three abnormal conditions in the controlled scenarios, even when the AI model alone did not classify all of them as anomalies.
+
+### Testing Limitations
+
+These tests verify the functional behavior of the hybrid classification logic for the selected scenarios.
+
+They do not establish real-world anomaly detection accuracy, precision, recall, or production-level reliability.
+
+Additional representative datasets and formal evaluation would be required before deployment in an operational warehouse.
+
+
+# 8. Backend Development
+
+## 8.1 FastAPI Backend
+
+The backend was developed using FastAPI.
+
+It connects the database, AI model, rule engine, and frontend dashboard.
+
+The main backend components include:
+
+| File | Responsibility |
+|---|---|
+| `main.py` | API endpoints and hybrid monitoring logic |
+| `database.py` | SQLite database operations |
+| `sensor.py` | Sensor data simulation |
+| `ai_model_v2.py` | V2 model preparation and training |
+| `main_backup.py` | Backup of the previous backend implementation |
+
+
+## 8.2 API Endpoints
+
+The FastAPI backend provides REST endpoints for accessing system information, environmental measurements, facility information, and hybrid anomaly detection results.
+
+| Endpoint | Method | Description |
+|---|---|---|
+| `/` | GET | Returns the API running status |
+| `/api/health` | GET | Returns API status, AI model information, and monitoring mode |
+| `/api/facilities` | GET | Returns information about the four monitored facilities |
+| `/api/readings` | GET | Retrieves sensor readings and hybrid anomaly classifications |
+| `/api/summary` | GET | Returns monitoring statistics and the latest sensor reading |
+
+### Facility-Specific Monitoring
+
+The `/api/readings` and `/api/summary` endpoints support facility-specific data retrieval using the `facility_id` query parameter.
+
+For example:
+
+`GET /api/readings?limit=50&facility_id=data-center`
+
+This request retrieves up to 50 recent readings associated with Data Center A.
+
+`GET /api/summary?facility_id=warehouse`
+
+This request returns monitoring statistics for Warehouse 4.
+
+### API Health Monitoring
+
+The `/api/health` endpoint provides information about:
+
+- Backend availability.
+- AI model loading status.
+- AI model version.
+- Number of AI input features.
+- Hybrid monitoring mode.
+- Number of configured facilities.
+
+The API exchanges information with the frontend using JSON.
+
+### Frontend Communication
+
+The frontend communicates with FastAPI using JavaScript Fetch API requests.
+
+Cross-Origin Resource Sharing (CORS) is configured to allow communication between the local frontend server and the backend.
+
+The backend runs on port 8000, while the frontend is served locally on port 5501.
+
+
+## 8.3 Backend Execution
+
+The backend is launched using Uvicorn:
+
+`python -m uvicorn main:app --reload --app-dir backend`
+
+The local API address is:
 
 `http://127.0.0.1:8000`
 
-FastAPI also provides an interactive API documentation interface at:
+Interactive API documentation is available at:
 
 `http://127.0.0.1:8000/docs`
 
 ---
 
-# 7. Frontend Dashboard Development
+# 9. Frontend Dashboard Development
 
-## 7.1 Dashboard Overview
+## 9.1 Dashboard Overview
 
-The frontend provides a graphical interface for monitoring warehouse environmental conditions.
+The frontend provides a browser-based interface for monitoring warehouse environmental conditions.
 
 It was developed using HTML, CSS, JavaScript, and Chart.js.
 
-The dashboard communicates with the FastAPI backend to retrieve the latest environmental measurements and AI analysis results.
+The dashboard retrieves monitoring information from the FastAPI backend.
 
-## 7.2 Dashboard Features
+## 9.2 Dashboard Features
 
-The dashboard includes the following features:
+The dashboard includes:
 
-1. **Temperature Monitoring:** Displays the latest temperature measurement.
-2. **Humidity Monitoring:** Displays the latest humidity measurement.
-3. **Total Readings:** Displays the number of stored sensor measurements.
-4. **AI Anomalies:** Displays the number of readings classified as anomalous.
-5. **Normal Readings:** Displays the number of readings classified as normal.
-6. **Environmental Charts:** Visualizes historical temperature and humidity measurements.
-7. **Sensor Readings Table:** Displays recent measurements with timestamps and AI classifications.
-8. **AI Alerts:** Displays a visual notification when the latest reading is classified as anomalous.
-9. **Connection Status:** Indicates whether the frontend can communicate with the backend.
+1. Temperature monitoring.
+2. Humidity monitoring.
+3. Total sensor readings.
+4. Normal and anomalous reading statistics.
+5. Temperature and humidity charts.
+6. Recent sensor readings table.
+7. Hybrid anomaly history.
+8. AI and rule-based detection source indicators.
+9. Environmental alert messages.
+10. Backend connection status.
 
-## 7.3 Automatic Dashboard Updates
+## 9.3 Hybrid Alert Display
 
-The JavaScript application periodically requests updated information from the backend.
+The dashboard distinguishes between different detection sources.
 
-The refresh interval is three seconds.
+Examples include:
 
-This allows the dashboard to display new sensor readings without requiring the user to reload the webpage manually.
+- `AI + SAFETY ALERT`
+- `ENVIRONMENTAL LIMIT EXCEEDED`
+- `AI ANOMALY DETECTED`
+- `HYBRID MONITORING ACTIVE`
+
+The readings table also displays the final classification and its detection source.
+
+
+## 9.4 Dashboard Data Updates
+
+The dashboard automatically retrieves updated monitoring information from the FastAPI backend every five seconds.
+
+JavaScript uses the Fetch API to request facility-specific sensor readings and monitoring statistics without reloading the entire webpage.
+
+The automatic update process refreshes:
+
+- Current temperature and humidity measurements.
+- Total, normal, and anomalous reading statistics.
+- Temperature and humidity visualizations.
+- Recent sensor readings.
+- Hybrid anomaly history.
+- Monitoring alerts and backend connection status.
+
+Users can switch between four monitored facilities:
+
+1. HQ - Tower 1.
+2. Data Center A.
+3. R&D Lab.
+4. Warehouse 4.
+
+Each facility has independently generated simulated sensor readings stored with a unique facility identifier.
+
+The dashboard preserves its scroll position during automatic updates, allowing users to inspect historical records without interruption.
+
+The frontend is served locally using Python's HTTP server on port 5501. FastAPI is configured to permit cross-origin requests from the local frontend.
+
 
 ---
 
-# 8. System Testing and Results
+# 10. System Testing and Results
 
-## 8.1 Testing Environment
+## 10.1 Testing Environment
 
-The complete software prototype was tested locally on Windows.
-
-The testing environment included:
+The prototype was tested locally on Windows using:
 
 - Python sensor simulator.
 - SQLite database.
-- Trained Isolation Forest model.
+- Isolation Forest V2 model.
+- Rule-based monitoring.
 - FastAPI backend.
-- Web-based dashboard.
+- Browser-based dashboard.
 - Chart.js visualizations.
 
-## 8.2 Functional Testing
 
-The following tests were performed:
+## 10.2 Functional Testing
 
-| Test | Expected Result | Status |
+The Smart Warehouse AIoT Monitoring System was tested locally to verify the integration of its main components.
+
+| Test | Expected Result | Result |
 |---|---|---|
-| Database initialization | Database created successfully | Passed |
-| Sensor simulation | New readings generated | Passed |
-| Database insertion | Sensor readings stored | Passed |
-| AI model loading | Trained model loaded | Passed |
-| Anomaly detection | Unusual readings identified | Passed |
-| API health check | API reports online | Passed |
-| API model status | AI model reports loaded | Passed |
-| Dashboard connection | Frontend communicates with backend | Passed |
-| Automatic refresh | Dashboard updates periodically | Passed |
-| Data visualization | Temperature and humidity charts displayed | Passed |
-| AI alert display | Anomaly notification displayed when applicable | Passed |
+| Database initialization | SQLite database initializes successfully | Passed |
+| Sensor simulation | Simulated environmental readings are generated | Passed |
+| Multi-facility simulation | Readings are generated for four facilities | Passed |
+| Database storage | Readings are stored with facility identifiers | Passed |
+| AI model loading | Isolation Forest V2 loads successfully | Passed |
+| AI scenario testing | Model returns classifications and scores | Passed |
+| Temperature threshold test | Temperature violations are detected | Passed |
+| Humidity threshold test | Humidity violations are detected | Passed |
+| Hybrid classification | AI and rule-based results are combined | Passed |
+| API health check | Backend reports online status | Passed |
+| Facility information endpoint | API provides configured facility information | Passed |
+| Facility-specific summary | API returns monitoring statistics for a selected facility | Passed |
+| Facility-specific readings | API retrieves readings for a selected facility | Passed |
+| Frontend connection | Dashboard communicates with FastAPI | Passed |
+| CORS configuration | Frontend requests from port 5501 are accepted | Passed |
+| Dashboard visualization | Measurements, statistics, and charts are displayed | Passed |
+| Facility navigation | Users can select monitored facilities | Passed |
+| Hybrid anomaly history | Historical anomalies and detection sources are displayed | Passed |
+| Automatic data refresh | Dashboard retrieves updated data periodically | Passed |
+| Dashboard scroll stability | Automatic updates do not reload the entire page | Passed |
 
-## 8.3 Testing Results
+### Testing Observations
 
-The testing demonstrated that the main software components work together successfully.
+The backend health endpoint confirmed that Isolation Forest V2 was loaded with four input features and that hybrid monitoring was active.
 
-The sensor simulator generated environmental readings, the SQLite database stored the measurements, and the Isolation Forest model analyzed the data.
+Facility-specific API requests successfully returned monitoring statistics.
 
-The FastAPI backend provided the monitoring information to the frontend, where the dashboard displayed measurements, statistics, historical charts, and AI classifications.
+Controlled AI tests demonstrated that the rule engine detected temperature and humidity violations that the AI model alone did not identify.
 
-The results confirm that the software prototype successfully demonstrates the integration of IoT-style data generation, machine learning, backend services, and web-based monitoring.
+The dashboard successfully displayed hybrid anomaly history after the frontend server and CORS configuration were corrected.
 
-## 8.4 Screenshots
+Automatic dashboard updates use JavaScript requests rather than full-page reloads, allowing the interface to remain stable during monitoring.
 
-The following screenshots should be included as evidence of the implementation:
+These functional checks demonstrate that the main components operate together in the local prototype.
+
+They do not establish production reliability, real-world sensor accuracy, or formal machine learning performance.
+
+## 10.3 Testing Results
+
+The testing demonstrated that the main software components work together.
+
+The Python simulator generated environmental readings, and SQLite stored the measurements.
+
+Isolation Forest V2 analyzed environmental patterns, while the rule engine checked configured environmental limits.
+
+The FastAPI backend successfully returned hybrid monitoring information. The dashboard displayed environmental measurements, monitoring statistics, anomaly classifications, and detection sources.
+
+The controlled tests also demonstrated that the rule engine can identify environmental limit violations that may not be detected by the AI model alone.
+
+These results confirm the functional integration of the prototype's main components. They do not establish production-level reliability or formal machine learning accuracy.
+
+## 10.4 Screenshots
+
+The following evidence should be included in the final project documentation:
 
 - System architecture diagram.
-- Running sensor simulator.
-- AI model training and testing output.
-- FastAPI backend running successfully.
-- API health endpoint.
+- Sensor simulator output.
+- AI model testing output.
+- FastAPI backend running.
+- API health response.
 - Main dashboard.
 - Temperature and humidity charts.
 - Sensor readings table.
-- AI anomaly alert.
+- Hybrid anomaly alert.
+- Rule-based detection test results.
 
-Screenshots are stored in the project's `screenshots` directory.
-
----
-
-# 9. Limitations and Future Improvements
-
-## 9.1 Current Limitations
-
-Although the prototype successfully demonstrates the integration of AI and IoT concepts, several limitations remain:
-
-1. **Simulated Sensor Data:** The current implementation uses a Python simulator instead of physical temperature and humidity sensors.
-2. **No MQTT Communication:** The current prototype communicates through local REST API requests rather than MQTT.
-3. **Limited Training Data:** The machine learning model uses a relatively small dataset of simulated environmental measurements.
-4. **Local Deployment:** The application currently runs on a local computer and is not deployed to a cloud platform.
-5. **Product-Specific Conditions:** The model does not yet consider different environmental requirements for different warehouse products.
-
-## 9.2 Future Improvements
-
-Several improvements could be introduced in future versions:
-
-- Integrate physical temperature and humidity sensors.
-- Use an ESP32 or Raspberry Pi for real-time sensor data collection.
-- Implement MQTT for IoT communication.
-- Expand the training dataset using real warehouse measurements.
-- Introduce product-specific environmental thresholds.
-- Develop more advanced monitoring and notification features.
-- Deploy the backend and database to a remote server.
-- Improve dashboard functionality with additional analytics.
-
-These improvements would help transform the current software prototype into a more complete warehouse monitoring solution.
+Screenshots should be stored in the project's `screenshots` directory.
 
 ---
 
-# 10. Conclusion
+# 11. Limitations and Future Improvements
 
-This project presented the design and development of a Smart Warehouse Temperature and Humidity Monitoring System based on Artificial Intelligence of Things (AIoT).
 
-The prototype integrates environmental data generation, Python-based processing, SQLite database management, machine learning-based anomaly detection, a FastAPI backend, and a web-based monitoring dashboard.
+## 11.1 Current Limitations
 
-The Isolation Forest algorithm was implemented to identify unusual temperature and humidity patterns. The dashboard provides an accessible interface for viewing environmental measurements, historical data, monitoring statistics, and AI alerts.
+The current Smart Warehouse AIoT Monitoring System is a functional software prototype with the following limitations:
 
-The development process demonstrated how different technologies can be integrated into a single monitoring application.
+1. **Simulated Sensor Data:** Temperature and humidity measurements are generated using Python rather than physical sensors.
 
-Although the current implementation relies on simulated sensor data, it provides a foundation for future development involving physical IoT devices, MQTT communication, and real-world warehouse monitoring.
+2. **No MQTT Communication:** The prototype uses local software components and REST API communication. MQTT-based sensor communication has not been implemented.
 
-Overall, the project demonstrates the practical application of Artificial Intelligence and Internet of Things technologies in a smart warehouse environment.
+3. **Limited Training Data:** Isolation Forest V2 was trained using available simulated environmental measurements rather than a representative real-world warehouse dataset.
+
+4. **Shared AI Model:** All four monitored facilities use the same trained Isolation Forest V2 model. The model has not been independently trained or validated for each facility.
+
+5. **Local Deployment:** The backend, database, and dashboard operate locally. Remote server deployment has not been implemented.
+
+6. **Demonstration Thresholds:** The configured temperature range of 15–30°C and humidity range of 30–70% are demonstration settings, not universal storage safety standards.
+
+7. **Limited Model Evaluation:** The controlled scenarios verify selected detection behaviors but do not provide formal accuracy, precision, recall, or false-positive-rate measurements.
+
+8. **No Physical Actuation:** The system displays monitoring information and alerts but does not control physical warehouse equipment.
+
+9. **No User Authentication:** The current prototype does not implement user accounts, role-based access control, or authentication for monitoring data.
+
+These limitations define the boundaries of the current implementation and identify areas for future development.
+
+
+## 11.2 Future Improvements
+
+Future development could include:
+
+- Integration of physical temperature and humidity sensors.
+- ESP32 or Raspberry Pi hardware integration.
+- MQTT communication for sensor data transmission.
+- Collection of real warehouse environmental data.
+- Product-specific environmental thresholds.
+- Formal AI model performance evaluation.
+- Additional dashboard analytics.
+- Remote notifications and monitoring.
+- Cloud or remote-server deployment.
+
+These improvements could help extend the prototype into a more complete warehouse monitoring solution.
+
+---
+
+# 12. Conclusion
+
+This project presented the development of a Smart Warehouse AIoT Monitoring System using hybrid anomaly detection.
+
+The prototype integrates simulated environmental data generation, Python processing, SQLite storage, Isolation Forest V2, rule-based environmental monitoring, a FastAPI backend, and a web-based dashboard.
+
+The main contribution is the combination of machine learning and configurable environmental rules. While the AI model identifies unusual environmental patterns, the rule engine checks measurements against predefined limits.
+
+The hybrid approach helps address limitations associated with relying on machine learning alone or fixed thresholds alone.
+
+The project demonstrates how AI and IoT-related technologies can be integrated into a practical environmental monitoring prototype.
+
+Although physical sensor integration and real-world deployment remain future improvements, the current implementation provides a foundation for further development of intelligent warehouse monitoring systems.
