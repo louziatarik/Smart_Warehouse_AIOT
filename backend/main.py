@@ -1,12 +1,31 @@
 
 from fastapi import FastAPI, HTTPException, Query
+from pydantic import BaseModel, Field
+from datetime import datetime
+from typing import Literal
+import math
 from fastapi.middleware.cors import CORSMiddleware
 
-from database import get_all_readings, FACILITIES
+from database import (
+    get_all_readings,
+    save_reading,
+    initialize_database,
+    FACILITIES
+)
 from ai_model_v2 import MODEL_PATH, prepare_features
 
 import joblib
 
+
+class ESP32SensorReading(BaseModel):
+    facility_id: Literal["warehouse"]
+    device_id: Literal["esp32-wokwi-01"]
+    temperature: float = Field(ge=-40, le=80)
+    humidity: float = Field(ge=0, le=100)
+    rule_status: Literal["NORMAL", "ANOMALY"]
+
+
+initialize_database()
 
 # Configurable demonstration thresholds
 MIN_TEMPERATURE = 15.0
@@ -231,4 +250,41 @@ def summary(facility_id: str = None):
         "anomaly_readings": anomaly_count,
         "latest_reading": latest,
         "monitoring_mode": "HYBRID"
+    }
+
+@app.post("/api/sensors/esp32", status_code=201)
+def receive_esp32_reading(data: ESP32SensorReading):
+    """Receive a simulated ESP32 measurement from Node-RED."""
+
+    if not math.isfinite(data.temperature) or not math.isfinite(data.humidity):
+        raise HTTPException(
+            status_code=422,
+            detail="Temperature and humidity must be finite numbers."
+        )
+
+    reading = {
+        "timestamp": datetime.now().isoformat(timespec="seconds"),
+        "temperature": data.temperature,
+        "humidity": data.humidity,
+        "facility_id": data.facility_id
+    }
+
+    try:
+        save_reading(reading)
+    except (ValueError, KeyError) as exc:
+        raise HTTPException(
+            status_code=400,
+            detail=str(exc)
+        )
+
+    stored_readings = get_all_readings(data.facility_id)
+
+    latest = analyze_readings(stored_readings)[0]
+
+    return {
+        "message": "ESP32 reading stored successfully",
+        "device_id": data.device_id,
+        "facility_id": data.facility_id,
+        "esp32_rule_status": data.rule_status,
+        "analysis": latest
     }

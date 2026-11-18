@@ -1,0 +1,254 @@
+[
+    {
+        "id": "209550b1bc0437bd",
+        "type": "tab",
+        "label": "Flux 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "fb49ec8c5fa7ea6d",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "broker.emqx.io",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "4790b32224c2728e",
+        "type": "mqtt in",
+        "z": "209550b1bc0437bd",
+        "name": "",
+        "topic": "nexus-iot-tarik-2026/warehouse/sensors",
+        "qos": "0",
+        "datatype": "auto-detect",
+        "broker": "fb49ec8c5fa7ea6d",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 290,
+        "y": 480,
+        "wires": [
+            [
+                "dea98d18b0acfe62",
+                "fbb7df0901251362",
+                "01ac7536afda7a84",
+                "9496a4c6bfd63f23"
+            ]
+        ]
+    },
+    {
+        "id": "dea98d18b0acfe62",
+        "type": "debug",
+        "z": "209550b1bc0437bd",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 400,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "fbb7df0901251362",
+        "type": "function",
+        "z": "209550b1bc0437bd",
+        "name": "function 1",
+        "func": "\nconst data = msg.payload;\n\nif (!data || typeof data !== \"object\") {\n    node.warn(\"Invalid MQTT payload\");\n    return null;\n}\n\nif (\n    data.facility_id !== \"warehouse\" ||\n    data.device_id !== \"esp32-wokwi-01\" ||\n    typeof data.temperature !== \"number\" ||\n    typeof data.humidity !== \"number\"\n) {\n    node.warn(\"Unexpected ESP32 sensor data\");\n    return null;\n}\n\nmsg.headers = {\n    \"Content-Type\": \"application/json\"\n};\n\nmsg.payload = {\n    facility_id: data.facility_id,\n    device_id: data.device_id,\n    temperature: data.temperature,\n    humidity: data.humidity,\n    rule_status: data.rule_status\n};\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 640,
+        "y": 480,
+        "wires": [
+            [
+                "09d59c4d3471d72b"
+            ]
+        ]
+    },
+    {
+        "id": "09d59c4d3471d72b",
+        "type": "http request",
+        "z": "209550b1bc0437bd",
+        "name": "Send to NEXUS FastAPI",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://127.0.0.1:8000/api/sensors/esp32",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 810,
+        "y": 540,
+        "wires": [
+            [
+                "86bb0e58c9cbc92b",
+                "99bf9cd1e524a949"
+            ]
+        ]
+    },
+    {
+        "id": "86bb0e58c9cbc92b",
+        "type": "debug",
+        "z": "209550b1bc0437bd",
+        "name": "FastAPI Response",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 790,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "01ac7536afda7a84",
+        "type": "function",
+        "z": "209550b1bc0437bd",
+        "name": "Temperature Monitoring",
+        "func": "\nconst data = msg.payload;\n\nif (!data || typeof data.temperature !== \"number\") {\n    node.warn(\"Invalid temperature reading\");\n    return null;\n}\n\nconst temperature = data.temperature;\n\nlet status = \"NORMAL\";\n\nif (temperature < 15 || temperature > 30) {\n    status = \"ANOMALY\";\n}\n\nmsg.payload = {\n    facility_id: data.facility_id,\n    device_id: data.device_id,\n    temperature: temperature,\n    unit: \"°C\",\n    status: status\n};\n\nnode.status({\n    fill: status === \"NORMAL\" ? \"green\" : \"red\",\n    shape: \"dot\",\n    text: `${temperature.toFixed(1)} °C | ${status}`\n});\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 740,
+        "wires": [
+            [
+                "e9b8940449e66b41"
+            ]
+        ]
+    },
+    {
+        "id": "e9b8940449e66b41",
+        "type": "debug",
+        "z": "209550b1bc0437bd",
+        "name": "Temperature Status",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 710,
+        "y": 820,
+        "wires": []
+    },
+    {
+        "id": "9496a4c6bfd63f23",
+        "type": "function",
+        "z": "209550b1bc0437bd",
+        "name": "Humidity Monitoring",
+        "func": "\nconst data = msg.payload;\n\nif (\n    !data ||\n    typeof data.humidity !== \"number\" ||\n    !Number.isFinite(data.humidity)\n) {\n    node.warn(\"Invalid humidity reading\");\n    return null;\n}\n\nconst humidity = data.humidity;\n\nlet status = \"NORMAL\";\n\nif (humidity < 30 || humidity > 70) {\n    status = \"ANOMALY\";\n}\n\nmsg.payload = {\n    facility_id: data.facility_id,\n    device_id: data.device_id,\n    humidity: humidity,\n    unit: \"%\",\n    status: status\n};\n\nnode.status({\n    fill: status === \"NORMAL\" ? \"green\" : \"red\",\n    shape: \"dot\",\n    text: `${humidity.toFixed(1)}% | ${status}`\n});\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 880,
+        "y": 380,
+        "wires": [
+            [
+                "ab2629fe3e5bd8bf"
+            ]
+        ]
+    },
+    {
+        "id": "ab2629fe3e5bd8bf",
+        "type": "debug",
+        "z": "209550b1bc0437bd",
+        "name": "Humidity Status",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 860,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "99bf9cd1e524a949",
+        "type": "function",
+        "z": "209550b1bc0437bd",
+        "name": "AI Anomaly Alerts",
+        "func": "\nconst response = msg.payload;\n\nif (!response || !response.analysis) {\n    node.warn(\"Missing FastAPI AI analysis\");\n    return null;\n}\n\nconst analysis = response.analysis;\n\nconst status = analysis.status;\nconst aiStatus = analysis.ai_status;\nconst ruleStatus = analysis.rule_status;\n\nif (![\"NORMAL\", \"ANOMALY\"].includes(status)) {\n    node.warn(\"Invalid hybrid anomaly status\");\n    return null;\n}\n\nconst isAnomaly = status === \"ANOMALY\";\n\nmsg.payload = {\n    facility_id: response.facility_id,\n    device_id: response.device_id,\n    temperature: analysis.temperature,\n    humidity: analysis.humidity,\n    ai_status: aiStatus,\n    rule_status: ruleStatus,\n    hybrid_status: status,\n    anomaly_score: analysis.anomaly_score,\n    rule_alerts: analysis.rule_alerts,\n    alert: isAnomaly\n        ? \"WARNING: Anomaly detected!\"\n        : \"Environment operating normally\"\n};\n\nnode.status({\n    fill: isAnomaly ? \"red\" : \"green\",\n    shape: \"dot\",\n    text: isAnomaly\n        ? \"AI ALERT: ANOMALY\"\n        : \"AI STATUS: NORMAL\"\n});\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1150,
+        "y": 580,
+        "wires": [
+            [
+                "82b31515c34a41e4"
+            ]
+        ]
+    },
+    {
+        "id": "82b31515c34a41e4",
+        "type": "debug",
+        "z": "209550b1bc0437bd",
+        "name": "AI Analysis Details",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1170,
+        "y": 660,
+        "wires": []
+    }
+]
