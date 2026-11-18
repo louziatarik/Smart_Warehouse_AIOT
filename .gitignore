@@ -27,3 +27,12 @@ node_modules/
 
 # IDE files
 .idea/
+# Local development settings
+.vscode/
+
+# Backup files
+backend/main_backup.py
+models/isolation_forest_backup.joblib
+
+# Temporary project files
+project_structure.txt
