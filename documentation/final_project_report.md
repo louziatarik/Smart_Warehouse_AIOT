@@ -17,17 +17,21 @@
 
 # Abstract
 
-Warehouse environments require environmental monitoring to help maintain appropriate storage conditions. Temperature and humidity variations may affect stored products, making continuous monitoring and anomaly identification important.
+Warehouse environments require continuous environmental monitoring to help maintain appropriate storage conditions. Temperature and humidity variations may affect stored products, making timely anomaly identification important.
 
-This project presents a Smart Warehouse AIoT Monitoring System that combines machine learning-based anomaly detection with rule-based environmental monitoring.
+This project presents **NEXUS IoT — Smart Warehouse AIoT Monitoring System**, an intelligent multi-facility environmental monitoring prototype integrating Internet of Things communication, machine learning, rule-based anomaly detection, and real-time visualization.
 
-The system generates temperature and humidity readings using a Python-based sensor simulator. The readings are processed and stored in an SQLite database. An Isolation Forest V2 model analyzes environmental patterns, while a configurable rule engine checks measurements against predefined temperature and humidity limits.
+The system supports two simulated data acquisition methods: a Python-based sensor simulator and a Wokwi ESP32 microcontroller connected to a simulated DHT22 temperature and humidity sensor. The ESP32 transmits environmental measurements using MQTT through an EMQX broker. Node-RED receives these messages, performs temperature and humidity monitoring, and forwards sensor data to a FastAPI backend.
 
-A FastAPI backend provides monitoring information through REST API endpoints. A web-based dashboard developed using HTML, CSS, JavaScript, and Chart.js presents environmental measurements, historical data, system statistics, and hybrid anomaly alerts.
+The backend validates and stores measurements in an SQLite database. A trained Isolation Forest V2 model analyzes environmental patterns using temperature, humidity, and changes between consecutive readings. A configurable rule engine checks measurements against predefined environmental limits. The hybrid detection mechanism combines both methods to identify abnormal conditions.
 
-The current implementation is a functional software prototype using simulated sensor data. It demonstrates the integration of IoT-style data generation, machine learning, rule-based monitoring, database management, and web technologies. Physical sensor integration and MQTT communication remain possible future improvements.
+An interactive web dashboard developed using HTML, CSS, JavaScript, and Chart.js provides facility-specific monitoring information, environmental measurements, historical data, statistics, and anomaly alerts. Node-RED additionally displays monitoring indicators based on the analysis returned by FastAPI.
 
-**Keywords:** AIoT, Smart Warehouse, Internet of Things, Machine Learning, Isolation Forest, Hybrid Anomaly Detection, FastAPI, SQLite.
+The complete ESP32–MQTT–Node-RED–FastAPI integration was functionally tested under normal and high-temperature conditions. The tests demonstrated successful sensor message transmission, backend storage, and anomaly detection.
+
+The resulting prototype demonstrates the integration of IoT communication, machine learning, database management, backend services, and web technologies within a modular environmental monitoring system. Physical sensor deployment and real-world warehouse validation remain future improvements.
+
+**Keywords:** AIoT, Smart Warehouse, ESP32, DHT22, MQTT, Node-RED, Machine Learning, Isolation Forest, Hybrid Anomaly Detection, FastAPI, SQLite.
 
 ---
 
@@ -79,93 +83,275 @@ Its implementation includes:
 - FastAPI backend services.
 - Browser-based monitoring dashboard.
 
-Physical sensors, MQTT communication, and real-world warehouse deployment are outside the current implementation scope.
+ The current implementation includes simulated ESP32 and DHT22 sensor measurements, MQTT communication, and Node-RED integration with the FastAPI backend. Physical sensor hardware deployment and real-world warehouse validation remain outside the current project scope.
 
 ---
 
 
+# 2. System Architecture
+
 ## 2.1 Architecture Overview
 
-The Smart Warehouse AIoT Monitoring System uses a modular, multi-facility architecture.
+The NEXUS IoT Smart Warehouse AIoT Monitoring System uses a modular, multi-facility architecture that integrates simulated IoT sensors, MQTT communication, Node-RED processing, a FastAPI backend, SQLite database storage, hybrid anomaly detection, and a web dashboard.
 
-The prototype monitors four simulated facilities:
+The prototype monitors four facilities:
 
 1. HQ - Tower 1 (`hq`).
 2. Data Center A (`data-center`).
 3. R&D Lab (`rnd`).
 4. Warehouse 4 (`warehouse`).
 
-The system consists of five main layers:
+The system consists of seven main layers:
 
-1. **Sensor Simulation Layer:** Generates temperature and humidity measurements for each facility.
-2. **Backend Processing Layer:** Handles data validation, database access, and API requests.
-3. **Hybrid Detection Layer:** Combines Isolation Forest V2 anomaly detection with rule-based environmental monitoring.
-4. **Database Layer:** Stores timestamped measurements with their corresponding facility identifiers.
-5. **Dashboard Layer:** Displays facility-specific environmental information, charts, statistics, and anomaly history.
+1. **Sensor Data Layer:** Generates environmental measurements using a Python simulator or a simulated Wokwi ESP32 connected to a DHT22 sensor.
+2. **IoT Communication Layer:** Transmits ESP32 readings using MQTT and processes them through Node-RED.
+3. **Backend Processing Layer:** Handles sensor validation, API requests, database operations, and anomaly analysis.
+4. **Database Layer:** Stores timestamped environmental readings with facility identifiers.
+5. **AI and Rule-Based Detection Layer:** Uses Isolation Forest V2 and configurable environmental thresholds to identify anomalies.
+6. **Hybrid Decision Layer:** Combines AI and rule-based classifications into a final monitoring status.
+7. **Dashboard and Alert Layer:** Displays facility-specific monitoring information and provides Node-RED anomaly indicators.
 
 All four facilities share the same FastAPI backend, SQLite database, and trained Isolation Forest V2 model.
 
-The current implementation is a software prototype using simulated environmental measurements rather than physical IoT sensors.
+The Python simulator supports all four facilities, while the Wokwi ESP32 integration currently targets Warehouse 4.
+
+The implementation uses simulated environmental measurements. MQTT communication and Node-RED integration are operational, but physical sensor hardware has not been deployed.
 
 ## 2.2 Data Flow
 
-The system follows this process:
+The system supports two environmental data acquisition workflows.
 
-1. The Python sensor simulator generates independent temperature and humidity readings for each of the four facilities.
-2. Each reading is associated with a unique `facility_id`.
-3. The readings are stored in the SQLite database.
-4. The backend retrieves environmental measurements and prepares the features required by Isolation Forest V2.
-5. The AI model analyzes temperature, humidity, and changes between measurements.
-6. The rule-based monitoring component checks readings against the configured environmental thresholds.
-7. Hybrid decision logic combines the AI and rule-based classifications.
-8. FastAPI provides facility-specific readings, statistics, and monitoring information through REST endpoints.
-9. The JavaScript dashboard requests updated information automatically every five seconds.
-10. Users select a facility from the sidebar to view its environmental measurements, charts, and anomaly history.
+### 2.2.1 Python Sensor Simulation Workflow
 
-The multi-facility architecture allows the prototype to demonstrate monitoring of several locations through one centralized interface.
+1. The Python sensor simulator generates temperature and humidity readings for the four configured facilities.
+2. Each measurement is associated with a `facility_id`.
+3. The measurements are validated and stored in SQLite.
+4. The backend retrieves the stored environmental measurements.
+5. Isolation Forest V2 analyzes temperature, humidity, and changes between readings.
+6. The rule-based engine checks environmental measurements against configured thresholds.
+7. Hybrid decision logic combines both classifications.
+8. FastAPI provides facility-specific monitoring information through REST endpoints.
+9. The JavaScript dashboard retrieves updated measurements and monitoring results periodically.
+10. Users select facilities from the dashboard sidebar to view their environmental information.
 
-The shared AI model is trained using available simulated data and has not been independently validated for each facility.
+### 2.2.2 ESP32, MQTT, and Node-RED Workflow
 
+The second workflow demonstrates IoT communication using a simulated ESP32 microcontroller and DHT22 environmental sensor.
 
+1. Wokwi simulates an ESP32 connected to a DHT22 sensor.
+2. The ESP32 reads temperature and humidity measurements.
+3. The ESP32 publishes the measurements as JSON messages using MQTT.
+4. The EMQX public MQTT broker receives and distributes the messages.
+5. Node-RED subscribes to the configured MQTT topic.
+6. Node-RED processes temperature and humidity through separate monitoring functions.
+7. Node-RED forwards the sensor measurements to FastAPI using HTTP POST.
+8. FastAPI validates and stores the incoming readings in SQLite.
+9. Isolation Forest V2 analyzes the measurements and environmental changes.
+10. The rule-based engine evaluates the configured temperature and humidity limits.
+11. Hybrid decision logic determines the final monitoring classification.
+12. FastAPI returns the anomaly analysis to Node-RED.
+13. Node-RED displays the monitoring results and anomaly indicators.
+14. The NEXUS IoT dashboard retrieves the stored measurements and analysis through the REST API.
+
+The ESP32 ingestion endpoint is:
+
+`POST /api/sensors/esp32`
+
+The MQTT configuration used for the demonstration is:
+
+| Parameter | Value |
+|---|---|
+| Broker | `broker.emqx.io` |
+| Port | `1883` |
+| MQTT topic | `nexus-iot-tarik-2026/warehouse/sensors` |
+| Facility ID | `warehouse` |
+| Device ID | `esp32-wokwi-01` |
+
+### 2.2.3 Hybrid Anomaly Detection Workflow
+
+Both data acquisition methods use the same backend anomaly detection mechanism.
+
+The trained Isolation Forest V2 model analyzes four features:
+
+1. Temperature.
+2. Humidity.
+3. Absolute temperature change.
+4. Absolute humidity change.
+
+The rule engine evaluates measurements against the configured demonstration thresholds:
+
+| Parameter | Minimum | Maximum |
+|---|---|---|
+| Temperature | 15°C | 30°C |
+| Humidity | 30% | 70% |
+
+The final classification is ANOMALY when either the AI model or the rule engine identifies an anomaly.
+
+The backend provides AI status, rule status, hybrid status, anomaly score, and triggered rule alerts.
+
+The shared AI model has not been independently validated for each facility.
 
 ## 2.3 Architecture Diagram
 
-The system architecture diagram is available at:
+The system's architecture consists of two sensor data sources connected to a centralized monitoring backend.
+
+```text
+                  NEXUS IoT
+             SENSOR DATA SOURCES
+                      |
+           +----------+----------+
+           |                     |
+           v                     v
+    Python Simulator       Wokwi ESP32
+     Four Facilities       DHT22 Sensor
+           |                     |
+           |                     v
+           |                MQTT Broker
+           |                     |
+           |                     v
+           |                  Node-RED
+           |                     |
+           |                 HTTP POST
+           |                     |
+           v                     v
+      SQLite Database <---- FastAPI
+           |                     |
+           +----------+----------+
+                      |
+                      v
+              Isolation Forest V2
+                      +
+                Rule-Based Engine
+                      |
+                      v
+                Hybrid Decision
+                      |
+             +--------+--------+
+             |                 |
+             v                 v
+        REST API          Node-RED Alerts
+             |
+             v
+        NEXUS Dashboard
+             |
+             v
+     Charts, Gauges, Statistics
+        and Anomaly History
+```
+
+The architecture diagram is also available at:
 
 ![Smart Warehouse AIoT System Architecture](../screenshots/smart-warehouse-architecture.png)
 
-The diagram illustrates the main components of the Smart Warehouse AIoT Monitoring System and their interactions.
+The existing image represents an earlier architecture version and should be updated to show the ESP32, MQTT, and Node-RED components.
 
-The implemented system includes simulated environmental data generation, a Python backend, SQLite database storage, Isolation Forest anomaly detection, rule-based environmental monitoring, REST API communication, and a web dashboard.
-
-The architecture has subsequently been extended to support four monitored facilities and hybrid anomaly detection using Isolation Forest V2.
-
+The completed system demonstrates the integration of simulated IoT communication, backend services, persistent storage, hybrid anomaly detection, and interactive monitoring within a centralized multi-facility architecture.
 
 # 3. Technologies and Development Tools
 
+The NEXUS IoT Smart Warehouse AIoT Monitoring System was developed using technologies for IoT simulation, communication, backend processing, machine learning, database management, and web visualization.
+
+The following technologies were used during development and integration.
+
 | Technology | Purpose |
 |---|---|
-| Python | Main programming language and data processing |
-| FastAPI | Backend REST API |
-| SQLite | Environmental measurement storage |
-| Scikit-learn | Machine learning |
-| Isolation Forest | Anomaly detection |
-| StandardScaler | Feature scaling |
-| Joblib | Model persistence |
+| Python | Main programming language and environmental data processing |
+| FastAPI | Backend REST API and ESP32 sensor ingestion |
+| SQLite | Persistent environmental measurement storage |
+| Scikit-learn | Machine learning implementation |
+| Isolation Forest V2 | Environmental anomaly detection |
+| StandardScaler | Machine learning feature scaling |
+| Joblib | Trained AI model persistence |
+| Wokwi | ESP32 and DHT22 hardware simulation |
+| ESP32 | Simulated IoT microcontroller |
+| DHT22 | Simulated temperature and humidity sensor |
+| Arduino C++ | ESP32 firmware development |
+| MQTT | IoT sensor data communication protocol |
+| EMQX | Public MQTT broker for demonstration |
+| Node-RED | IoT message processing, monitoring, and backend integration |
+| HTTP/JSON | Communication between Node-RED and FastAPI |
 | HTML | Dashboard structure |
 | CSS | Dashboard styling |
-| JavaScript | Frontend functionality |
-| Chart.js | Data visualization |
-| Uvicorn | Running the backend |
+| JavaScript | Frontend functionality and API communication |
+| Chart.js | Environmental data visualization |
+| Uvicorn | FastAPI application server |
 | Visual Studio Code | Development environment |
+| Git and GitHub | Version control and project repository management |
 
 ## 3.1 Development Environment
 
 The project was developed using Visual Studio Code on Windows.
 
-Python 3.13.15 was used as the programming environment. A Python virtual environment was created to manage dependencies.
+Python 3.13.15 was used for backend development and machine learning implementation. A Python virtual environment was created to manage dependencies.
 
-The project separates backend, frontend, data, models, documentation, and screenshots into different directories.
+The project separates backend, frontend, data, trained models, documentation, and screenshots into organized directories.
+
+Git and GitHub were used to manage source code and track project development.
+
+## 3.2 IoT Simulation Environment
+
+The IoT component was developed using the Wokwi online simulation platform.
+
+The simulated hardware consists of:
+
+- ESP32 microcontroller.
+- DHT22 temperature and humidity sensor.
+- Green LED for normal environmental conditions.
+- Red LED for abnormal environmental conditions.
+
+The ESP32 firmware reads sensor measurements, evaluates demonstration thresholds, and publishes JSON messages through MQTT.
+
+The simulated device uses the identifier `esp32-wokwi-01` and is associated with Warehouse 4.
+
+Physical sensor hardware was not required for the simulation.
+
+## 3.3 MQTT Communication Environment
+
+MQTT was selected as the communication protocol between the simulated ESP32 and Node-RED.
+
+The implementation uses the public EMQX broker at `broker.emqx.io` on port `1883`.
+
+Sensor measurements are published to:
+
+`nexus-iot-tarik-2026/warehouse/sensors`
+
+MQTT allows the simulated ESP32 to publish environmental measurements while Node-RED subscribes to the configured topic.
+
+The public broker is used only for educational demonstration.
+
+## 3.4 Node-RED Development Environment
+
+Node-RED was used to implement the IoT communication and monitoring workflow.
+
+The implemented flow includes:
+
+1. MQTT input for receiving ESP32 measurements.
+2. Temperature monitoring function.
+3. Humidity monitoring function.
+4. HTTP request node for forwarding measurements to FastAPI.
+5. FastAPI response monitoring.
+6. AI anomaly alert function.
+7. Debug nodes for inspecting messages and analysis results.
+
+The complete flow was exported to:
+
+`documentation/nexus-iot-flow-final.json`
+
+The trained Isolation Forest model executes in the Python backend. Node-RED processes the returned analysis rather than running the machine learning model itself.
+
+## 3.5 Backend and Frontend Development Tools
+
+FastAPI provides REST endpoints for sensor ingestion, monitoring summaries, historical readings, and system health.
+
+SQLite stores timestamped environmental measurements and facility identifiers.
+
+Scikit-learn provides the Isolation Forest V2 model, which is combined with configurable environmental threshold rules.
+
+The frontend was developed using HTML, CSS, JavaScript, and Chart.js.
+
+The NEXUS IoT dashboard provides multi-facility monitoring, environmental gauges, historical charts, statistics, and anomaly alerts.
+
+The frontend communicates with FastAPI using HTTP requests and periodically refreshes monitoring information.
 
 ---
 
@@ -414,20 +600,24 @@ Additional representative datasets and formal evaluation would be required befor
 
 ## 8.1 FastAPI Backend
 
-The backend was developed using FastAPI.
+The NEXUS IoT backend was developed using Python and FastAPI.
 
-It connects the database, AI model, rule engine, and frontend dashboard.
+It connects environmental sensor data sources, SQLite database storage, Isolation Forest V2 anomaly detection, configurable environmental threshold rules, and the web dashboard.
+
+The backend also provides an HTTP interface for receiving simulated ESP32 sensor measurements forwarded through Node-RED.
 
 The main backend components include:
 
 | File | Responsibility |
 |---|---|
-| `main.py` | API endpoints and hybrid monitoring logic |
-| `database.py` | SQLite database operations |
-| `sensor.py` | Sensor data simulation |
-| `ai_model_v2.py` | V2 model preparation and training |
-| `main_backup.py` | Backup of the previous backend implementation |
+| `main.py` | REST API endpoints, ESP32 sensor ingestion, and hybrid monitoring logic |
+| `database.py` | SQLite database initialization, storage, and retrieval |
+| `sensor.py` | Python-based environmental sensor simulation |
+| `ai_model_v2.py` | AI feature preparation and Isolation Forest V2 model functionality |
+| `test_ai_model_v2.py` | Controlled machine learning scenario testing |
+| `main_backup.py` | Backup of an earlier backend implementation |
 
+The backend is responsible for validating sensor measurements, storing environmental readings, preparing machine learning inputs, evaluating environmental thresholds, and returning monitoring results.
 
 ## 8.2 API Endpoints
 
@@ -440,8 +630,9 @@ The FastAPI backend provides REST endpoints for accessing system information, en
 | `/api/facilities` | GET | Returns information about the four monitored facilities |
 | `/api/readings` | GET | Retrieves sensor readings and hybrid anomaly classifications |
 | `/api/summary` | GET | Returns monitoring statistics and the latest sensor reading |
+| `/api/sensors/esp32` | POST | Receives simulated ESP32 measurements and returns hybrid anomaly analysis |
 
-### Facility-Specific Monitoring
+### 8.2.1 Facility-Specific Monitoring
 
 The `/api/readings` and `/api/summary` endpoints support facility-specific data retrieval using the `facility_id` query parameter.
 
@@ -455,7 +646,60 @@ This request retrieves up to 50 recent readings associated with Data Center A.
 
 This request returns monitoring statistics for Warehouse 4.
 
-### API Health Monitoring
+### 8.2.2 ESP32 Sensor Ingestion
+
+The endpoint:
+
+`POST /api/sensors/esp32`
+
+receives environmental sensor measurements forwarded from Node-RED.
+
+The current implementation supports the simulated ESP32 device `esp32-wokwi-01` associated with Warehouse 4.
+
+Example request payload:
+
+```json
+{
+  "facility_id": "warehouse",
+  "device_id": "esp32-wokwi-01",
+  "temperature": 24.6,
+  "humidity": 55,
+  "rule_status": "NORMAL"
+}
+```
+
+The endpoint performs the following operations:
+
+1. Receives a JSON measurement from Node-RED.
+2. Validates the facility identifier and device identifier.
+3. Validates temperature and humidity values.
+4. Rejects invalid or non-finite measurements.
+5. Generates a timestamp for the incoming reading.
+6. Stores the measurement in SQLite.
+7. Retrieves the relevant facility's sensor readings.
+8. Performs hybrid AI and rule-based anomaly analysis.
+9. Returns the latest analyzed reading to Node-RED.
+
+The response includes a confirmation message, the device and facility identifiers, the ESP32 rule status, and the backend analysis.
+
+The analysis contains fields such as:
+
+| Field | Description |
+|---|---|
+| `id` | Stored reading identifier |
+| `timestamp` | Reading timestamp |
+| `temperature` | Environmental temperature |
+| `humidity` | Environmental humidity |
+| `facility_id` | Associated monitoring facility |
+| `ai_status` | Isolation Forest V2 classification |
+| `rule_status` | Backend rule-based classification |
+| `rule_alerts` | Environmental threshold alerts |
+| `status` | Final hybrid monitoring status |
+| `anomaly_score` | Isolation Forest decision score |
+
+The endpoint enables Node-RED to display the hybrid monitoring result without executing the machine learning model inside Node-RED.
+
+### 8.2.3 API Health Monitoring
 
 The `/api/health` endpoint provides information about:
 
@@ -466,22 +710,51 @@ The `/api/health` endpoint provides information about:
 - Hybrid monitoring mode.
 - Number of configured facilities.
 
-The API exchanges information with the frontend using JSON.
+The API exchanges information with Node-RED and the frontend using JSON.
 
-### Frontend Communication
+### 8.2.4 Frontend Communication
 
 The frontend communicates with FastAPI using JavaScript Fetch API requests.
 
-Cross-Origin Resource Sharing (CORS) is configured to allow communication between the local frontend server and the backend.
+Cross-Origin Resource Sharing (CORS) is configured to support communication between the local frontend server and the backend.
 
-The backend runs on port 8000, while the frontend is served locally on port 5501.
+The backend runs on port `8000`.
 
+For the current demonstration setup, the frontend is served locally on port `5500`.
 
-## 8.3 Backend Execution
+The dashboard periodically requests updated monitoring information without requiring full-page reloads.
+
+## 8.3 Node-RED and FastAPI Integration
+
+Node-RED acts as an intermediary between the simulated ESP32 MQTT publisher and the FastAPI backend.
+
+The communication workflow is:
+
+1. The simulated ESP32 publishes temperature and humidity measurements through MQTT.
+2. Node-RED subscribes to the configured MQTT topic.
+3. The Temperature Monitoring function evaluates the temperature measurement.
+4. The Humidity Monitoring function evaluates the humidity measurement.
+5. An HTTP request node sends the sensor payload to FastAPI.
+6. FastAPI validates, stores, and analyzes the measurement.
+7. Node-RED receives the HTTP response.
+8. The AI Anomaly Alerts function processes the returned hybrid classification.
+9. Node-RED displays normal or anomaly status indicators.
+
+The Node-RED flow was exported to:
+
+`documentation/nexus-iot-flow-final.json`
+
+The integration separates communication processing from machine learning inference.
+
+Node-RED handles message routing and monitoring indicators, while FastAPI performs the backend anomaly analysis.
+
+## 8.4 Backend Execution
 
 The backend is launched using Uvicorn:
 
-`python -m uvicorn main:app --reload --app-dir backend`
+```powershell
+python -m uvicorn main:app --reload --app-dir backend
+```
 
 The local API address is:
 
@@ -491,8 +764,23 @@ Interactive API documentation is available at:
 
 `http://127.0.0.1:8000/docs`
 
----
+The frontend can be started from the project root using:
 
+```powershell
+python -m http.server 5500
+```
+
+Dashboard URL:
+
+`http://127.0.0.1:5500/frontend/index.html`
+
+Node-RED is available locally at:
+
+`http://127.0.0.1:1880`
+
+The complete integration requires the FastAPI backend, Node-RED, and Wokwi simulation to be running during the ESP32 demonstration.
+
+---
 # 9. Frontend Dashboard Development
 
 ## 9.1 Dashboard Overview
@@ -558,8 +846,7 @@ Each facility has independently generated simulated sensor readings stored with 
 
 The dashboard preserves its scroll position during automatic updates, allowing users to inspect historical records without interruption.
 
-The frontend is served locally using Python's HTTP server on port 5501. FastAPI is configured to permit cross-origin requests from the local frontend.
-
+The frontend is served locally using Python's HTTP server on port 5500. FastAPI is configured to permit cross-origin requests from the local frontend.
 
 ---
 
@@ -567,20 +854,25 @@ The frontend is served locally using Python's HTTP server on port 5501. FastAPI 
 
 ## 10.1 Testing Environment
 
-The prototype was tested locally on Windows using:
+The NEXUS IoT Smart Warehouse AIoT Monitoring System was tested in a local Windows development environment using:
 
-- Python sensor simulator.
+- Python environmental sensor simulator.
+- Wokwi ESP32 and DHT22 simulation.
+- MQTT communication through the public EMQX broker.
+- Node-RED message processing and monitoring flows.
+- FastAPI backend and ESP32 ingestion endpoint.
 - SQLite database.
-- Isolation Forest V2 model.
-- Rule-based monitoring.
-- FastAPI backend.
-- Browser-based dashboard.
+- Isolation Forest V2 anomaly detection model.
+- Rule-based environmental monitoring.
+- Hybrid AI and rule-based classification.
+- Browser-based NEXUS IoT dashboard.
 - Chart.js visualizations.
 
+The testing focused on functional correctness, component integration, environmental threshold detection, and real-time monitoring behavior.
 
 ## 10.2 Functional Testing
 
-The Smart Warehouse AIoT Monitoring System was tested locally to verify the integration of its main components.
+The main software components were tested to verify their integration.
 
 | Test | Expected Result | Result |
 |---|---|---|
@@ -598,7 +890,7 @@ The Smart Warehouse AIoT Monitoring System was tested locally to verify the inte
 | Facility-specific summary | API returns monitoring statistics for a selected facility | Passed |
 | Facility-specific readings | API retrieves readings for a selected facility | Passed |
 | Frontend connection | Dashboard communicates with FastAPI | Passed |
-| CORS configuration | Frontend requests from port 5501 are accepted | Passed |
+| CORS configuration | Frontend requests from the configured local server are accepted | Passed |
 | Dashboard visualization | Measurements, statistics, and charts are displayed | Passed |
 | Facility navigation | Users can select monitored facilities | Passed |
 | Hybrid anomaly history | Historical anomalies and detection sources are displayed | Passed |
@@ -617,99 +909,100 @@ The dashboard successfully displayed hybrid anomaly history after the frontend s
 
 Automatic dashboard updates use JavaScript requests rather than full-page reloads, allowing the interface to remain stable during monitoring.
 
-These functional checks demonstrate that the main components operate together in the local prototype.
+## 10.3 ESP32 and MQTT Integration Testing
 
-They do not establish production reliability, real-world sensor accuracy, or formal machine learning performance.
+The simulated ESP32 and DHT22 sensor were tested using the Wokwi simulation platform.
 
-## 10.3 Testing Results
+The ESP32 was configured to publish environmental measurements to the MQTT broker:
 
-The testing demonstrated that the main software components work together.
+`broker.emqx.io:1883`
 
-The Python simulator generated environmental readings, and SQLite stored the measurements.
+MQTT topic:
 
-Isolation Forest V2 analyzed environmental patterns, while the rule engine checked configured environmental limits.
+`nexus-iot-tarik-2026/warehouse/sensors`
 
-The FastAPI backend successfully returned hybrid monitoring information. The dashboard displayed environmental measurements, monitoring statistics, anomaly classifications, and detection sources.
+The Node-RED MQTT input node subscribed to this topic and received the sensor messages.
 
-The controlled tests also demonstrated that the rule engine can identify environmental limit violations that may not be detected by the AI model alone.
+The integration tests verified that:
 
-These results confirm the functional integration of the prototype's main components. They do not establish production-level reliability or formal machine learning accuracy.
+1. The simulated ESP32 generated environmental measurements.
+2. MQTT messages were published to the configured broker.
+3. Node-RED received the messages.
+4. Temperature and humidity monitoring functions processed the readings.
+5. Node-RED forwarded the sensor data to FastAPI using HTTP POST.
+6. FastAPI stored and analyzed the readings.
+7. Node-RED received the backend response and displayed monitoring results.
 
-## 10.4 Screenshots
+The end-to-end integration was successfully demonstrated using normal and abnormal environmental measurements.
 
-The following evidence should be included in the final project documentation:
+## 10.4 Normal Environmental Condition Test
 
-- System architecture diagram.
-- Sensor simulator output.
-- AI model testing output.
-- FastAPI backend running.
-- API health response.
-- Main dashboard.
-- Temperature and humidity charts.
-- Sensor readings table.
-- Hybrid anomaly alert.
-- Rule-based detection test results.
+A controlled normal environmental scenario was tested using the following measurements:
 
-Screenshots should be stored in the project's `screenshots` directory.
+| Parameter | Value |
+|---|---|
+| Temperature | 24.6°C |
+| Humidity | 55% |
+| Facility | Warehouse 4 |
+| Device | `esp32-wokwi-01` |
+| Expected rule classification | NORMAL |
+| Observed monitoring result | NORMAL |
 
----
+The ESP32 simulation generated measurements within the configured environmental limits.
+
+Node-RED received the MQTT message and forwarded the reading to FastAPI.
+
+The backend processed the measurement and returned the monitoring analysis.
+
+The Node-RED flow displayed the normal environmental condition.
+
+This test demonstrated that the integrated system could process a normal sensor reading through the complete communication pipeline.
+
+## 10.5 Abnormal Environmental Condition Test
+
+A controlled high-temperature scenario was tested using the following measurements:
+
+| Parameter | Value |
+|---|---|
+| Temperature | 40.5°C |
+| Humidity | 55% |
+| Facility | Warehouse 
 
 # 11. Limitations and Future Improvements
 
-
 ## 11.1 Current Limitations
 
-The current Smart Warehouse AIoT Monitoring System is a functional software prototype with the following limitations:
+The NEXUS IoT Smart Warehouse AIoT Monitoring System is a functional educational prototype that integrates simulated IoT sensors, MQTT communication, Node-RED, FastAPI, SQLite, and hybrid anomaly detection.
 
-1. **Simulated Sensor Data:** Temperature and humidity measurements are generated using Python rather than physical sensors.
+Although the main components have been successfully integrated and tested, the system has several limitations.
 
-2. **No MQTT Communication:** The prototype uses local software components and REST API communication. MQTT-based sensor communication has not been implemented.
+1. **Simulated Sensor Hardware:** The system uses a Python sensor simulator and a Wokwi-based ESP32 with a simulated DHT22 sensor. Physical sensors have not been deployed in a real warehouse.
 
-3. **Limited Training Data:** Isolation Forest V2 was trained using available simulated environmental measurements rather than a representative real-world warehouse dataset.
+2. **Demonstration MQTT Infrastructure:** MQTT communication has been implemented using the public EMQX broker. The current configuration is intended for demonstration and does not provide a production-grade private broker, encrypted communication, or authenticated device access.
 
-4. **Shared AI Model:** All four monitored facilities use the same trained Isolation Forest V2 model. The model has not been independently trained or validated for each facility.
+3. **Limited Training Data:** Isolation Forest V2 was trained using simulated environmental measurements rather than a representative real-world warehouse dataset.
 
-5. **Local Deployment:** The backend, database, and dashboard operate locally. Remote server deployment has not been implemented.
+4. **Shared AI Model:** All four monitored facilities use the same trained Isolation Forest V2 model. Separate facility-specific models have not been trained or validated.
 
-6. **Demonstration Thresholds:** The configured temperature range of 15–30°C and humidity range of 30–70% are demonstration settings, not universal storage safety standards.
+5. **Local Deployment:** FastAPI, SQLite, Node-RED, and the frontend dashboard operate in a local development environment. A production cloud deployment has not been implemented.
 
-7. **Limited Model Evaluation:** The controlled scenarios verify selected detection behaviors but do not provide formal accuracy, precision, recall, or false-positive-rate measurements.
+6. **Demonstration Thresholds:** The configured temperature range of 15–30°C and humidity range of 30–70% are educational demonstration settings. Actual environmental requirements depend on the products and equipment being monitored.
 
-8. **No Physical Actuation:** The system displays monitoring information and alerts but does not control physical warehouse equipment.
+7. **Limited Model Evaluation:** Controlled tests verify selected detection behaviors, but formal machine learning performance measurements, including precision, recall, and false-positive rates, have not been established.
 
-9. **No User Authentication:** The current prototype does not implement user accounts, role-based access control, or authentication for monitoring data.
-
-These limitations define the boundaries of the current implementation and identify areas for future development.
-
-
-## 11.2 Future Improvements
-
-Future development could include:
-
-- Integration of physical temperature and humidity sensors.
-- ESP32 or Raspberry Pi hardware integration.
-- MQTT communication for sensor data transmission.
-- Collection of real warehouse environmental data.
-- Product-specific environmental thresholds.
-- Formal AI model performance evaluation.
-- Additional dashboard analytics.
-- Remote notifications and monitoring.
-- Cloud or remote-server deployment.
-
-These improvements could help extend the prototype into a more complete warehouse monitoring solution.
-
----
-
+8. **No Physical Actuation:** The simulated ESP32 uses LED indicators, and Node
 # 12. Conclusion
 
-This project presented the development of a Smart Warehouse AIoT Monitoring System using hybrid anomaly detection.
+This project presented the design, development, and testing of **NEXUS IoT: Smart Warehouse AIoT Monitoring System Using Hybrid AI Anomaly Detection**.
 
-The prototype integrates simulated environmental data generation, Python processing, SQLite storage, Isolation Forest V2, rule-based environmental monitoring, a FastAPI backend, and a web-based dashboard.
+The system integrates environmental sensor simulation, IoT communication, backend processing, database storage, machine learning, rule-based monitoring, and a web-based dashboard into a unified environmental monitoring prototype.
 
-The main contribution is the combination of machine learning and configurable environmental rules. While the AI model identifies unusual environmental patterns, the rule engine checks measurements against predefined limits.
+The project was developed using two complementary data acquisition approaches. The first uses a Python-based sensor simulator to generate environmental measurements for four monitored facilities. The second uses a simulated ESP32 microcontroller and DHT22 sensor in Wokwi to publish temperature and humidity measurements through MQTT.
 
-The hybrid approach helps address limitations associated with relying on machine learning alone or fixed thresholds alone.
+The ESP32 integration uses the EMQX MQTT broker and Node-RED to receive, process, and forward sensor measurements to the FastAPI backend. This demonstrates an end-to-end IoT communication workflow connecting simulated hardware to backend anomaly detection.
 
-The project demonstrates how AI and IoT-related technologies can be integrated into a practical environmental monitoring prototype.
+The backend uses SQLite for environmental data storage and Isolation Forest V2 for machine learning-based anomaly detection. The AI model analyzes temperature, humidity, and changes in environmental measurements. A rule-based engine evaluates configurable temperature and humidity limits.
 
-Although physical sensor integration and real-world deployment remain future improvements, the current implementation provides a foundation for further development of intelligent warehouse monitoring systems.
+The main technical contribution is the **hybrid anomaly detection approach**, which combines machine learning with environmental threshold rules. This allows the system to identify unusual environmental patterns while also detecting violations of predefined operating limits.
+
+The NEXUS IoT dashboard provides multi-facility monitoring, environmental gauges, historical charts, reading statistics, and anomaly history. Its integration with FastAPI allows users to observe stored environmental measurements and monitoring results through a
